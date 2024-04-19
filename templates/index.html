@@ -5,37 +5,31 @@
 <body data-gr-ext-installed="" data-new-gr-c-s-check-loaded="14.1167.0">
 <h2><span style="font-family:tahoma,geneva,sans-serif;">Welcome to FlaskTracker Flights</span></h2>
 
-<p>You can use this online HTML editor to generate HTML code for your own website. You can do all sorts of things with this HTML editor, such as:</p>
 
-<ul>
-	<li>Create <strong>bold</strong> or <em>italic</em> text.</li>
-	<li>Change the <span style="color:#800000;">text color</span></li>
-	<li>Change the <span style="font-family:comic sans ms,cursive;">font family</span> or <span style="font-size:12px;">font siz</span></li>
-	<li>Create <a href="http://www.html.am/html-codes/links/">hyperlinks</a></li>
-	<li>Create a bulleted list...</li>
-	<li>...and much more!</li>
-</ul>
 
 <table align="center" border="1" cellpadding="1" cellspacing="1" style="width:500px;">
 	<tbody>
 		<tr>
 			<td>
-			<h2 style="font-style: italic; text-align: center;">Log in as Customer</h2>
+				<form action="/loginCustomerAuth" method="POST">
+					<h2 style="font-style: italic; text-align: center;">Log in as Customer</h2>
 
-			<p style="text-align: center;"><input maxlength="255" name="emailaddress" placeholder="email address" size="40" type="email" /></p>
+					<p style="text-align: center;"><input maxlength="255" name="emailaddress" placeholder="email address" size="40" type="email" /></p>
 
-			<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
+					<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
 
-			<p style="text-align: center;"><input name="login_customer" type="button" value="Log In" /></p>
+					<p style="text-align: center;"><input type="submit" value="Log In" /></p>
+				</form>
 			</td>
 			<td>
-			<h2 style="font-style: italic; text-align: center;">Log in as Staff</h2>
+				<h2 style="font-style: italic; text-align: center;">Log in as Staff</h2>
 
-			<p style="text-align: center;"><input maxlength="255" name="emailaddress" placeholder="email address" size="40" type="email" /></p>
+				<p style="text-align: center;"><input maxlength="255" name="emailaddress" placeholder="email address" size="40" type="email" /></p>
 
-			<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
+				<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
 
-			<p style="text-align: center;"><input name="login_staff" type="button" value="Log In" /></p>
+				<p style="text-align: center;"><input name="login_staff" type="submit" value="Log In" /></p>
+				
 			</td>
 		</tr>
 		<tr>
@@ -46,7 +40,7 @@
 
 			<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
 
-			<p style="text-align: center;"><input name="register_customer" type="button" value="Register" /></p>
+			<p style="text-align: center;"><input name="register_customer" type="submit" value="Register" /></p>
 			</td>
 			<td>
 			<h2 style="font-style: italic; text-align: center;">Register as Staff</h2>
@@ -55,7 +49,7 @@
 
 			<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
 
-			<p style="text-align: center;"><input name="register_staff" type="button" value="Register" /></p>
+			<p style="text-align: center;"><input name="register_staff" type="submit" value="Register" /></p>
 			</td>
 		</tr>
 	</tbody>
