@@ -1,68 +1,57 @@
-<html>
-<head>
-	<title></title>
-</head>
-<body data-gr-ext-installed="" data-new-gr-c-s-check-loaded="14.1167.0">
 <h2><span style="font-family:tahoma,geneva,sans-serif;">Welcome to FlaskTracker Flights</span></h2>
+<p><span style="font-family:tahoma,geneva,sans-serif;">Flight Searcher</span></p>
 
+{% if not message %}
+	<a href="/login">Login</a>
+	<a href="/register">Register</a>
+{% endif %}
 
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
 
-<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:500px;">
-	<tbody>
-		<tr>
-			<td>
-				<form action="/loginCustomerAuth" method="POST">
-					<h2 style="font-style: italic; text-align: center;">Log in as Customer</h2>
+<form action="/lookUpFlight" method="POST">
+	<figure class="table" style="width:500px;">
+		<table cellpadding="1" cellspacing="1">
+			<tbody>
+				<tr>
+					<td>
+						<p>&nbsp;</p>
+						<p><input maxlength="255" name="departureAirport" placeholder="Departure Airport" size="40" type="search"></p>
+						<p><input maxlength="255" name="arrivalAirport" placeholder="Arrival Airport" size="40" type="search"></p>
+						<p><input maxlength="255" name="departureDate" placeholder="Departure Date" size="40" type="date"></p>
+						<p>&nbsp;</p>
+					</td>
+					<td>
+						<p>&nbsp;</p>
+						<p><input name="roundTripBool"  size="40" type="checkbox"></p>
+						<p><input maxlength="255" name="returnDate" placeholder="Return Date" size="40" type="date"></p>
+						<p>&nbsp;</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</figure>
+	<p><input type="submit" value="Register"></p>
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
 
-					<p style="text-align: center;"><input maxlength="255" name="emailaddress" placeholder="email address" size="40" type="email" /></p>
+<table>
+	<th>Airline Name</th>
+	<th>Flight Number</th>
+	<th>Departure Time</th>
+	<th>Arrival Time</th>
 
-					<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
-
-					<p style="text-align: center;"><input type="submit" value="Log In" /></p>
-				</form>
-			</td>
-			<td>
-				<h2 style="font-style: italic; text-align: center;">Log in as Staff</h2>
-
-				<p style="text-align: center;"><input maxlength="255" name="emailaddress" placeholder="email address" size="40" type="email" /></p>
-
-				<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
-
-				<p style="text-align: center;"><input name="login_staff" type="submit" value="Log In" /></p>
-				
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<h2 style="font-style: italic; text-align: center;">Register as Customer</h2>
-
-			<p style="text-align: center;"><input maxlength="255" name="emailaddress" placeholder="email address" size="40" type="email" /></p>
-
-			<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
-
-			<p style="text-align: center;"><input name="register_customer" type="submit" value="Register" /></p>
-			</td>
-			<td>
-			<h2 style="font-style: italic; text-align: center;">Register as Staff</h2>
-
-			<p style="text-align: center;"><input maxlength="255" name="emailaddress" placeholder="email address" size="40" type="email" /></p>
-
-			<p style="text-align: center;"><input maxlength="255" name="password" placeholder="password" size="40" type="password" /></p>
-
-			<p style="text-align: center;"><input name="register_staff" type="submit" value="Register" /></p>
-			</td>
-		</tr>
-	</tbody>
+{% for flight in flights %}
+	<tr>
+		<td>{{flight['name']}}</td>
+		<td>{{flight['num']}}</td>
+		<td>{{flight['depTime']}}</td>
+		<td>{{flight['arrTime']}}</td>
+	</tr>
+{% endfor %}
 </table>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>This is a WYSIWYG HTML editor so you can see the changes as you edit.</p>
-
-<p>&nbsp;</p>
-
-<p>Once you&#39;ve got everything looking the way you want, click on the &quot;Source&quot; button above (on the left) to get the HTML source code.</p>
-<grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></body>
-</html>

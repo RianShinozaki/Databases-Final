@@ -17,14 +17,60 @@ conn = pymysql.connect(host='localhost',
 #Define a route to hello function
 @app.route('/')
 def hello():
-	
 	return render_template('index.html')
 
-@app.route('/loginCustomerAuth', methods=['GET', 'POST'])
-def loginCustomerAuth():
-	error = None
-	return render_template('login.html', error=error)
+@app.route('/login')
+def login():
+	return render_template('login.html')
 
+@app.route('/lookUpFlight', methods=['GET', 'POST'])
+def lookUpFlight():
+    departureAirport = request.form['departureAirport']
+    arrivalAirport = request.form['arrivalAirport']
+    departureDate = request.form['departureDate']
+
+    cursor = conn.cursor()
+    query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
+    cursor.execute(query, (departureAirport, arrivalAirport, departureDate))
+
+    data = cursor.fetchall()
+    error = None
+    if(data):
+        for flight in data:
+            print(flight['depTime'])
+        cursor.close()
+        return render_template('index.html', flights=data)
+    else:
+        error = "No flights match those parameters at this time."
+        return render_template('index.html', error = error)
+
+
+#Authenticates the login
+@app.route('/loginAuth', methods=['GET', 'POST'])
+def loginAuth():
+	#grabs information from the forms
+	username = request.form['username']
+	password = request.form['password']
+
+	#cursor used to send queries
+	cursor = conn.cursor()
+	#executes query
+	query = 'SELECT * FROM user WHERE username = %s and password = %s'
+	cursor.execute(query, (username, password))
+	#stores the results in a variable
+	data = cursor.fetchone()
+	#use fetchall() if you are expecting more than 1 data row
+	cursor.close()
+	error = None
+	if(data):
+		#creates a session for the the user
+		#session is a built in
+		session['username'] = username
+		return redirect(url_for('home'))
+	else:
+		#returns an error message to the html page
+		error = 'Invalid login or username'
+		return render_template('login.html', error=error)
 
 """
 #Define route for login
