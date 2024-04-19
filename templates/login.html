@@ -1,19 +1,34 @@
-<html>
-<head>
-</head>
-<body>
-<form action="/loginAuth" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> </br>
-	<input type="password" name = "password" placeholder="password" required/></br>
-	<input type="submit" value = Login />
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
-	{% endif %}
-</form>
-
-<a href="/">Go back</a>
-
-</body>
-
-
-</html>
+<h2>LOGIN</h2>
+<a href="/">Home</a>
+<figure class="table">
+    <table>
+        <tbody>
+            <tr>
+                <td>CUSTOMER</td>
+                <td>EMPLOYEE</td>
+            </tr>
+            <tr>
+                <td>
+					<form action="/customerLoginAuth" method="POST">
+						<input type="email" name = "username" placeholder="username" required/> </br>
+						<input type="password" name = "password" placeholder="password" required/></br>
+						<input type="submit" value = Login />
+						{% if error %}
+							<p class="customer_error"><strong>Error:</strong> {{error}}</p>
+						{% endif %}
+					</form>
+                </td>
+                <td>
+                    <form action="/employeeLoginAuth" method="POST">
+						<input type="email" name = "username" placeholder="username" required/> </br>
+						<input type="password" name = "password" placeholder="password" required/></br>
+						<input type="submit" value = Login />
+						{% if error %}
+							<p class="customer_error"><strong>Error:</strong> {{error}}</p>
+						{% endif %}
+					</form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</figure>
