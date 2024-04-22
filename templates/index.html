@@ -1,57 +1,126 @@
-<h2><span style="font-family:tahoma,geneva,sans-serif;">Welcome to FlaskTracker Flights</span></h2>
-<p><span style="font-family:tahoma,geneva,sans-serif;">Flight Searcher</span></p>
+<!DOCTYPE html>
+<html>
 
-{% if not message %}
-	<a href="/login">Login</a>
-	<a href="/register">Register</a>
-{% endif %}
+<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./static/style.css"/>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<title>FlaskFlights</title>
+</head>
+<body>
+	<nav>
+		<h1 class = "navigator-header">FlaskFlights</h2>
+		<div class = "login">
+		{% if not username %}
+			<a class = "login" href="/login">LOGIN</a>
+			<a class = "login" href="/register">REGISTER</a>
+		{% endif %}
+		{% if username %}
+			<a class = "login" href="/logout">LOGOUT</a>
+		{% endif %}
+		</div>
+	</nav>
+	<main>
+		<form action="/post" method="POST">
+			{% if username %}
+			<h2>Welcome {{username}}</h1>
+			
+			<div class = "search-results">
+				<p><strong>My future flights</strong></p>
+				<table>
+					<th>Airline Name</th>
+					<th>Flight Number</th>
+					<th>Departure Time</th>
+					<th>Arrival Time</th>
+					<th>Action</th>
+				
+				{% for flight in myflights %}
+					<tr>
+						<td>{{flight['name']}}</td>
+						<td>{{flight['num']}}</td>
+						<td>{{flight['depTime']}}</td>
+						<td>{{flight['arrTime']}}</td>
+						<td>
+							<p class = "center-aligned-button"><input type="submit" value="Select"></p>
+						</td>
+					</tr>
+				{% endfor %}
+				</table>
+			</div>
+			{% endif %}
+		</form>
 
-<style type="text/css">
-	table, th, td{
-		border: 1px solid black;
-	}
-</style>
+		<div class = "flight-search">
+			<h2>Book your flight today!</h2>
+			
+			
+			
+			<style type="text/css">
+				table, th, td{
+					border: 1px solid black;
+				}
+			</style>
+			
+			<form action="/lookUpFlight" method="POST">
+				
+				<div class = "flight-search-fields">
+					<div class = "flight-search-fields-left">
+						<p>Departure Airport</p>
+						<p><input maxlength="255" name="departureAirport" placeholder="Departure Airport" size="30" type="search"></p>
+						<p>Departure Date</p>
+						<p><input maxlength="255" name="departureDate" placeholder="Departure Date" size="30" type="date"></p>
+					</div>
+					<div class = "flight-search-fields-right">
+						<p>Arrival Airport</p>
+						<p><input maxlength="255" name="arrivalAirport" placeholder="Arrival Airport" size="30" type="search"></p>
+						<p>Return Date</p>
+						<p><input maxlength="255" name="returnDate" placeholder="Return Date" size="30" type="date"></p>
+					</div>
 
-<form action="/lookUpFlight" method="POST">
-	<figure class="table" style="width:500px;">
-		<table cellpadding="1" cellspacing="1">
-			<tbody>
+				</div>
+				
+				<p class = "center-aligned-button"><input type="submit" value="Search Flights"></p>
+
+				
+				<!--{% if error %}
+					<p class="error"><strong>Error:</strong> {{error}}</p>
+				{% endif %}-->
+			</form>
+			
+			
+		</div>
+
+		{% if flights %}
+		<div class = "search-results">
+			<table>
+				<th>Airline Name</th>
+				<th>Flight Number</th>
+				<th>Departure Time</th>
+				<th>Arrival Time</th>
+				{% if username %}
+				<th>Action</th>
+				{% endif %}
+			
+			{% for flight in flights %}
 				<tr>
+					<td>{{flight['name']}}</td>
+					<td>{{flight['num']}}</td>
+					<td>{{flight['depTime']}}</td>
+					<td>{{flight['arrTime']}}</td>
+					{% if username %}
 					<td>
-						<p>&nbsp;</p>
-						<p><input maxlength="255" name="departureAirport" placeholder="Departure Airport" size="40" type="search"></p>
-						<p><input maxlength="255" name="arrivalAirport" placeholder="Arrival Airport" size="40" type="search"></p>
-						<p><input maxlength="255" name="departureDate" placeholder="Departure Date" size="40" type="date"></p>
-						<p>&nbsp;</p>
+						<form action="/selectTicket" method="POST">
+							<p class = "center-aligned-button"><button type="submit" name = "flight_num" value = "{{flight['num']}}">Select</button></p>
+						</form>
 					</td>
-					<td>
-						<p>&nbsp;</p>
-						<p><input name="roundTripBool"  size="40" type="checkbox"></p>
-						<p><input maxlength="255" name="returnDate" placeholder="Return Date" size="40" type="date"></p>
-						<p>&nbsp;</p>
-					</td>
+					{% endif %}
 				</tr>
-			</tbody>
-		</table>
-	</figure>
-	<p><input type="submit" value="Search Flights"></p>
-	{% if error %}
-		<p class="error"><strong>Error:</strong> {{error}}</p>
-	{% endif %}
-</form>
+			{% endfor %}
+			</table>
+		</div>
+		{% endif %}
+	</main>
+</body>
 
-<table>
-	<th>Airline Name</th>
-	<th>Flight Number</th>
-	<th>Departure Time</th>
-	<th>Arrival Time</th>
-
-{% for flight in flights %}
-	<tr>
-		<td>{{flight['name']}}</td>
-		<td>{{flight['num']}}</td>
-		<td>{{flight['depTime']}}</td>
-		<td>{{flight['arrTime']}}</td>
-	</tr>
-{% endfor %}
-</table>
+</html>

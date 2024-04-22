@@ -1,34 +1,47 @@
-<h2>LOGIN</h2>
-<a href="/">Home</a>
-<figure class="table">
-    <table>
-        <tbody>
-            <tr>
-                <td>CUSTOMER</td>
-                <td>EMPLOYEE</td>
-            </tr>
-            <tr>
-                <td>
-					<form action="/customerLoginAuth" method="POST">
-						<input type="email" name = "username" placeholder="username" required/> </br>
-						<input type="password" name = "password" placeholder="password" required/></br>
-						<input type="submit" value = Login />
-						{% if error %}
-							<p class="customer_error"><strong>Error:</strong> {{error}}</p>
-						{% endif %}
-					</form>
-                </td>
-                <td>
-                    <form action="/employeeLoginAuth" method="POST">
-						<input type="email" name = "username" placeholder="username" required/> </br>
-						<input type="password" name = "password" placeholder="password" required/></br>
-						<input type="submit" value = Login />
-						{% if error %}
-							<p class="customer_error"><strong>Error:</strong> {{error}}</p>
-						{% endif %}
-					</form>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</figure>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./static/style.css"/>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<title>FlaskFlights</title>
+</head>
+<body>
+    <h2>LOGIN</h2>
+    <a href="/">Home</a>
+    <figure class="table">
+        <table>
+            <tbody>
+                <tr>
+                    <td>CUSTOMER</td>
+                    <td>EMPLOYEE</td>
+                </tr>
+                <tr>
+                    <td>
+                        <form action="/customerLoginAuth" method="POST">
+                            <input type="email" name = "username" placeholder="username" required/> </br>
+                            <input type="password" name = "password" placeholder="password" required/></br>
+                            <input type="submit" value = Login />
+                            {% if error %}
+                                <p class="customer_error"><strong>Error:</strong> {{error}}</p>
+                            {% endif %}
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/employeeLoginAuth" method="POST">
+                            <input type="email" name = "username" placeholder="username" required/> </br>
+                            <input type="password" name = "password" placeholder="password" required/></br>
+                            <input type="submit" value = Login />
+                            {% if error %}
+                                <p class="customer_error"><strong>Error:</strong> {{error}}</p>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </figure>
+</body>

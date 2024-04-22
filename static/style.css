@@ -1,0 +1,111 @@
+:root {
+    --border-radius-large:          100px;
+    font-family:sans-serif, Verdana;
+
+    --palette-0: #FEE1C7;
+    --palette-1: #FFE6E6;
+    --palette-2: #E1AFD1;
+    --palette-3: #F44174;
+    --palette-4: #4C1E4F;
+
+    background-color:var(--palette-1);
+
+}
+body {
+    margin: 0;
+    padding: 0;
+}
+p {
+    font-family:tahoma,geneva,sans-serif;
+}
+nav {
+    background-color: var(--palette-4);
+    height: 60px;
+    padding-top: 30px;
+    margin: 0px;
+    display: inline-block;
+    justify-content:left;
+    position:fixed;
+    top: 0px;
+    width: 100%;
+    left: 0px;
+    border-bottom:20px solid var(--palette-2);
+    border-bottom-style: 50px;
+    padding-left: 60px;
+}
+div.login {
+    float: right;
+    padding-right: 100px;
+}
+a.login {
+    background-color:var(--palette-3);
+    margin-top: 40px;
+    padding: 20px;
+    padding-top:10px;
+    padding-bottom: 10px;
+    border-radius: 15px;
+    margin:auto;
+    color:var(--palette-0);
+    vertical-align: center;
+}
+
+h1.navigator-header {
+    margin: 0px;
+    padding-left: 20px;
+    vertical-align: middle;
+    color:var(--palette-1);
+    font-family:monospace, 'Lucida Console';
+    font-size: 30px;
+    float: left;
+}
+main {
+    background-color:var(--palette-1);
+    padding-top: 110px;
+    padding-left: 20px;
+}
+div.flight-search {
+    
+    background-color:var(--palette-2);
+    margin-top: 40px;
+    padding-left: 20px;
+    border-radius: 15px;
+    max-width: 600px;
+    margin:auto;
+    color: var(--palette-4);
+}
+h2 {
+    font-family:tahoma,geneva,sans-serif;
+    font-size: 20px;
+    padding: 20px;
+}
+.flight-search-fields {
+    
+    padding: 20px;
+    display: flex;
+    margin:auto;
+    
+}
+div.flight-search-fields-left {
+    float:left;
+}
+div.flight-search-fields-right {
+    padding-left: 70px;
+    float:right;
+}
+.center-aligned-button {
+    margin:auto;
+    padding-bottom:50px;
+    position: relative;
+}
+
+.search-results {
+    
+    background-color:var(--palette-2);
+    margin-top: 40px;
+    padding-left: 20px;
+    border-radius: 15px;
+    max-width: 600px;
+    margin:auto;
+    color: var(--palette-4);
+    
+}

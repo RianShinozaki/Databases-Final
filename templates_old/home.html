@@ -3,7 +3,9 @@
 </head>
 <body>
 <form action="/post" method="POST">
+	{% if username %}
 	<h1>Welcome {{username}}</h1>
+	{% endif %}
 	<input type="text" name = "blog" placeholder="post" required/> </br>
 	<input type="submit" value = Post />
 </form>
