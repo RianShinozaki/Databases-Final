@@ -19,16 +19,15 @@ conn = pymysql.connect(host='localhost',
 #Define a route to hello function
 
 def homepage_fields():
-	username = session.get('username')
+	username = session.get('email')
 	myflights = []
-	if(session.get('username')):
+	if(session.get('email')):
 		cursor = conn.cursor()
 		query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num;'
-		cursor.execute(query, (session.get('username')))
+		cursor.execute(query, (session.get('email')))
 		myflights = cursor.fetchall()
 		error = None
 		if(myflights):
-			print(myflights)
 			cursor.close()
 	return (username, myflights)
 
@@ -37,13 +36,9 @@ def hello():
 	fields = homepage_fields()
 	return render_template('index.html', username = fields[0], myflights = fields[1])
 
-@app.route('/login')
-def login():
-	return render_template('login.html')
-
 @app.route('/logout')
 def logout():
-	session.pop('username')
+	session.pop('email')
 	return redirect('/')
 
 @app.route('/lookUpFlight', methods=['GET', 'POST'])
@@ -61,20 +56,21 @@ def lookUpFlight():
 	data = cursor.fetchall()
 	error = None
 	if(data):
-		for flight in data:
-			print(flight['depTime'])
 		cursor.close()
 		return render_template('index.html', username = fields[0], myflights = fields[1], flights=data)
 	else:
 		error = "No flights match those parameters at this time."
 		return render_template('index.html', username = fields[0], myflights = fields[1], error = error)
 
+@app.route('/login')
+def login():
+	return render_template('login.html')
 
 #Authenticates the login
 @app.route('/customerLoginAuth', methods=['GET', 'POST'])
 def customerLoginAuth():
 	#grabs information from the forms
-	username = request.form['username']
+	username = request.form['email']
 	password = request.form['password']
 
 	#cursor used to send queries
@@ -90,46 +86,54 @@ def customerLoginAuth():
 	if(data):
 		#creates a session for the the user
 		#session is a built in
-		session['username'] = username
+		session['email'] = username
 		return redirect('/')
 	else:
 		#returns an error message to the html page
-		error = 'Invalid login or username'
+		error = 'Invalid login or email'
 		return render_template('login.html', error=error)
-	
-#Authenticates the login
-@app.route('/employeeLoginAuth', methods=['GET', 'POST'])
-def employeeLoginAuth():
-	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
 
-	#cursor used to send queries
-	cursor = conn.cursor()
-	#executes query
-	query = 'SELECT * FROM user WHERE username = %s and password = %s'
-	cursor.execute(query, (username, password))
-	#stores the results in a variable
-	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
-	cursor.close()
+@app.route('/register')
+def register():
+	return render_template('register.html')
+
+#Authenticates the register
+@app.route('/customerRegisterAuth', methods=['GET', 'POST'])
+def customerRegisterAuth():
+	username = request.form['email']
+	password = request.form['password']
+	passwordconfirm = request.form['confirmpassword']
 	error = None
-	if(data):
-		#creates a session for the the user
-		#session is a built in
-		session['username'] = username
-		return redirect(url_for('/'))
+
+	#check password confirmation
+	if(password != passwordconfirm):
+		error = 'Passwords do not match!'
+		return render_template('register.html', error=error)
+	
+	cursor = conn.cursor()
+	
+	#check if the user already exists.
+	query = 'SELECT * FROM customer WHERE customer_email = %s'
+	cursor.execute(query, (username))
+	data = cursor.fetchone()
+
+	#this is not all the data needed for a cusomter yet!
+	if(not data):
+		session['email'] = username
+		query = 'INSERT INTO customer(customer_email, password) VALUES (%s, %s)'
+		cursor.execute(query, (username, password))
+		cursor.close()
+		return redirect('/')
 	else:
-		#returns an error message to the html page
-		error = 'Invalid login or username'
-		return render_template('login.html', error=error)
+		error = 'Email already in use.'
+		cursor.close()
+		return render_template('register.html', error=error)
 
 #Takes you to the ticket purchase screen and saves flight_num in question
 @app.route('/selectTicket', methods=['GET', 'POST'])
 def selectTicket():
 	flight_num = request.form['flight_num']
 	session['selected_flight'] = flight_num
-	print(flight_num)
 	return redirect('ticketPurchase')
 
 #Page data for the ticket purchase screen
@@ -140,8 +144,6 @@ def purchaseTicket():
 	cursor.execute(query, (session.get('selected_flight')))
 	flightInfo = cursor.fetchall()
 	error = None
-	print(flightInfo)
-	print(flightInfo)
 	cursor.close()
 	return render_template('ticketpurchase.html', flightInfo = flightInfo)
 
@@ -154,7 +156,7 @@ def confirmPurchaseTIcket():
 
 	#Insert into ticket_purchase using ticket ID
 	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('username'), datetime.datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], 100.00))
+	cursor.execute(query, (ticketid, session.get('email'), datetime.datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], 100.00))
 
 	#Get more flight info using saved flight num
 	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE num = %s;'
@@ -163,7 +165,7 @@ def confirmPurchaseTIcket():
 
 	#Insert into ticket
 	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('selected_flight'), flightInfo['depTime'],session.get('username'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
+	cursor.execute(query, (ticketid, session.get('selected_flight'), flightInfo['depTime'],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
 	cursor.close()
 
 	session.pop('selected_flight')
