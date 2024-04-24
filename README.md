@@ -3,14 +3,14 @@
 
 ### Home page when not logged-in:
 When the user is not logged-in, the following cases should be available in the home page:
-1. `View Public Info`: All users, whether logged in or not, can:
+1. ✅ `View Public Info`: All users, whether logged in or not, can:
     - Search for future flights based on source city/airport name, destination city/airport name,
 departure date for one way (departure and return dates for round trip).
     - Will be able to see the flights status based on airline name, flight number, arrival/departure
 date.
-2. `Register`: 2 types of user registrations (Customer, and Airline Staff) option via forms as mentioned in
+2.  `Register`: 2 types of user registrations (Customer, and Airline Staff) option via forms as mentioned in
 the part 1 of the project.
-3. `Login`: 2 types of user login (Customer, and Airline Staff). Users enters their username (email address
+3. ✅ `Login`: 2 types of user login (Customer, and Airline Staff). Users enters their username (email address
 will be used as username for customer) - x, and password - y, via forms on login page. This data is sent
 as POST parameters to the login-authentication component, which checks whether there is a tuple in
 the corresponding user’s table with username=x and the password = md5(y) :
@@ -34,11 +34,11 @@ page, or you may prefer to just show them when he/she does some of the following
 ### Customer use cases:
 After logging in successfully a user(customer) may do any of the following use cases:
 
-1. `View My flights`: Provide various ways for the user to see flights information which he/she purchased.
+1. ✅ `View My flights`: Provide various ways for the user to see flights information which he/she purchased.
 The default should be showing for the future flights. Optionally you may include a way for the user to
 specify a range of dates, specify destination and/or source airport name or city name etc.
 
-2. `Search for flights`: Search for future flights (one way or round trip) based on source city/airport name,
+2. ✅ `Search for flights`: Search for future flights (one way or round trip) based on source city/airport name,
 destination city/airport name, dates (departure or return).
 
 3. `Purchase tickets`: Customer chooses a flight and purchase ticket for this flight, providing all the
@@ -58,7 +58,7 @@ chart/table showing month wise money spent for last 6 months. He/she will also h
 a range of dates to view total amount of money spent within that range and a bar chart/table showing
 month wise money spent within that range.
 
-7. `Logout`: The session is destroyed and a “goodbye” page or the login page is displayed.
+7. ✅ `Logout`: The session is destroyed and a “goodbye” page or the login page is displayed.
 
 ### Airline Staff use cases:
 After logging in successfully an airline staff may do any of the following use cases:
@@ -100,4 +100,4 @@ taken only on that particular airline.
 9. `View Earned Revenue`: Show total amount of revenue earned from ticket sales in the last month and
 last year.
 
-10. `Logout`: The session is destroyed and a “goodbye” page or the login page is displayed
+10. ✅ `Logout`: The session is destroyed and a “goodbye” page or the login page is displayed
