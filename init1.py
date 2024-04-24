@@ -120,8 +120,8 @@ def customerRegisterAuth():
 	#this is not all the data needed for a cusomter yet!
 	if(not data):
 		session['email'] = username
-		query = 'INSERT INTO customer(customer_email, password) VALUES (%s, %s)'
-		cursor.execute(query, (username, password))
+		query = 'INSERT INTO customer VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+		cursor.execute(query, (username, password, request.form['firstName'],request.form['lastName'],request.form['buildingNum'],request.form['street'],request.form['aptNum'], request.form['city'], request.form['state'], request.form['zipCode'],request.form['passportNum'],request.form['passportExpiration'],request.form['passportCountry'],request.form['dob']))
 		cursor.close()
 		return redirect('/')
 	else:
