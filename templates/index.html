@@ -50,9 +50,12 @@
 			</div>
 			{% endif %}
 		</form>
-
 		<div class = "flight-search">
-			<h2>Book your flight today!</h2>
+			{% if not admin %}
+				<h2>Book your flight today!</h2>
+			{% else %}
+				<h2>Search for a flight!</h2>
+			{% endif %}
 			
 			
 			
@@ -99,7 +102,9 @@
 				<th>Departure Time</th>
 				<th>Arrival Time</th>
 				{% if username %}
-				<th>Action</th>
+					{% if not admin %}
+						<th>Action</th>
+					{% endif %}
 				{% endif %}
 			
 			{% for flight in flights %}
@@ -109,17 +114,20 @@
 					<td>{{flight['depTime']}}</td>
 					<td>{{flight['arrTime']}}</td>
 					{% if username %}
-					<td>
-						<form action="/selectTicket" method="POST">
-							<p class = "center-aligned-button"><button type="submit" name = "flight_num" value = "{{flight['num']}}">Select</button></p>
-						</form>
-					</td>
+						{% if not admin %}
+							<td>
+								<form action="/selectTicket" method="POST">
+									<p class = "center-aligned-button"><button type="submit" name = "flight_num" value = "{{flight['num']}}">Select</button></p>
+								</form>
+							</td>
+						{% endif %}
 					{% endif %}
 				</tr>
 			{% endfor %}
 			</table>
 		</div>
 		{% endif %}
+
 	</main>
 </body>
 

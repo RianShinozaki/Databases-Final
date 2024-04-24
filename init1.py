@@ -26,15 +26,17 @@ def homepage_fields():
 		query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num;'
 		cursor.execute(query, (session.get('email')))
 		myflights = cursor.fetchall()
-		error = None
+		error = None			
 		if(myflights):
 			cursor.close()
-	return (username, myflights)
+		if(session.get('admin')):
+			return (username, myflights, True)
+	return (username, myflights, False)
 
 @app.route('/')
 def hello():
 	fields = homepage_fields()
-	return render_template('index.html', username = fields[0], myflights = fields[1])
+	return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2])
 
 @app.route('/logout')
 def logout():
@@ -57,10 +59,10 @@ def lookUpFlight():
 	error = None
 	if(data):
 		cursor.close()
-		return render_template('index.html', username = fields[0], myflights = fields[1], flights=data)
+		return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2], flights=data)
 	else:
 		error = "No flights match those parameters at this time."
-		return render_template('index.html', username = fields[0], myflights = fields[1], error = error)
+		return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2], error = error)
 
 @app.route('/login')
 def login():
@@ -149,7 +151,7 @@ def purchaseTicket():
 
 #When you press "purchase" on the ticket screen
 @app.route('/confirmPurchaseTicket', methods = ['GET', 'POST'])
-def confirmPurchaseTIcket():
+def confirmPurchaseTicket():
 	cursor = conn.cursor()
 	# This doesn't guarantee unique tickets, so we should look into that
 	ticketid = random.randrange(0, 99999)
@@ -170,6 +172,35 @@ def confirmPurchaseTIcket():
 
 	session.pop('selected_flight')
 	return redirect('/')
+
+@app.route('/employeeLoginAuth', methods=['GET', 'POST'])
+def staffLoginAuth():
+	username = request.form['email']
+	password = request.form['password']
+
+	#cursor used to send queries
+	cursor = conn.cursor()
+
+	#executes query
+	query = 'SELECT * FROM airline_staff NATURAL JOIN staff_email WHERE email = %s and password = %s'
+	cursor.execute(query, (username, password))
+	#stores the results in a variable
+	data = cursor.fetchone()
+	#use fetchall() if you are expecting more than 1 data row
+	cursor.close()
+	error = None
+	if(data):
+		#creates a session for the the user
+		#session is a built in
+		session['email'] = username
+		# authorization level of login
+		session["admin"] = "staff"
+		return redirect('/')
+	else:
+		#returns an error message to the html page
+		error = 'Invalid login or email'
+		return render_template('login.html', error=error)
+
 
 """
 #Define route for login
