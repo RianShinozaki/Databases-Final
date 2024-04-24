@@ -175,14 +175,14 @@ def confirmPurchaseTicket():
 
 @app.route('/employeeLoginAuth', methods=['GET', 'POST'])
 def staffLoginAuth():
-	username = request.form['email']
+	username = request.form['username']
 	password = request.form['password']
 
 	#cursor used to send queries
 	cursor = conn.cursor()
 
 	#executes query
-	query = 'SELECT * FROM airline_staff NATURAL JOIN staff_email WHERE email = %s and password = %s'
+	query = 'SELECT * FROM airline_staff WHERE username = %s and password = %s'
 	cursor.execute(query, (username, password))
 	#stores the results in a variable
 	data = cursor.fetchone()
