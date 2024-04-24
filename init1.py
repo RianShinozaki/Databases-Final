@@ -194,14 +194,44 @@ def staffLoginAuth():
 		#session is a built in
 		session['email'] = username
 		# authorization level of login
-		session["admin"] = "staff"
+		session["admin"] = data['airline_name']
 		return redirect('/')
 	else:
 		#returns an error message to the html page
 		error = 'Invalid login or email'
 		return render_template('login.html', error=error)
 
+@app.route('/maintenance', methods=['GET', 'POST'])
+def maintenance():
+	start = request.form['start']
+	end = request.form['end']
+	id = request.form['id']
 
+	# set up a view & ensure the maintenances on the same
+    # plane don't overlap
+
+@app.route('/reviews', methods=['GET', 'POST'])
+def reviews():
+	fields = homepage_fields()
+
+	departure = request.form["departure"]
+	flight_num = request.form["flight_num"]
+
+	cursor = conn.cursor()
+	query = 'SELECT customer_email, rating, comment FROM customer_review NATURAL JOIN flight WHERE departure_date_time = %s AND flight_num = %s AND airplane_id = %s'
+	cursor.execute(query, (departure, flight_num, session.get('admin')))
+
+	data = cursor.fetchall()
+	error = None
+	if(data):
+		cursor.close()
+		# fix this
+		return render_template('reviews.html', username = fields[0], myflights = fields[1], admin = fields[2], flights=data)
+	else:
+		error = "There are no reviews for this flight yet."
+		# fix this
+		return render_template('reviews.html', username = fields[0], myflights = fields[1], admin = fields[2], flights=data)
+	
 """
 #Define route for login
 @app.route('/login')
