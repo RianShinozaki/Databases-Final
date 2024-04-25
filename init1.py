@@ -1,6 +1,7 @@
 #Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect
 import pymysql.cursors
+import hashlib
 import random
 import datetime
 
@@ -79,6 +80,7 @@ def customerLoginAuth():
 	cursor = conn.cursor()
 	#executes query
 	query = 'SELECT * FROM customer WHERE customer_email = %s and password = %s'
+	
 	cursor.execute(query, (username, password))
 	#stores the results in a variable
 	data = cursor.fetchone()
@@ -123,6 +125,7 @@ def customerRegisterAuth():
 	if(not data):
 		session['email'] = username
 		query = 'INSERT INTO customer VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+		password = (hashlib.sha256(password.encode('utf-8'))).hexdigest()
 		cursor.execute(query, (username, password, request.form['firstName'],request.form['lastName'],request.form['buildingNum'],request.form['street'],request.form['aptNum'], request.form['city'], request.form['state'], request.form['zipCode'],request.form['passportNum'],request.form['passportExpiration'],request.form['passportCountry'],request.form['dob']))
 		cursor.close()
 		return redirect('/')
@@ -174,7 +177,7 @@ def confirmPurchaseTicket():
 	return redirect('/')
 
 @app.route('/employeeLoginAuth', methods=['GET', 'POST'])
-def staffLoginAuth():
+def employeeLoginAuth():
 	username = request.form['username']
 	password = request.form['password']
 
@@ -183,6 +186,8 @@ def staffLoginAuth():
 
 	#executes query
 	query = 'SELECT * FROM airline_staff WHERE username = %s and password = %s'
+	password = (hashlib.sha256(password.encode('utf-8'))).hexdigest()
+	print(password)
 	cursor.execute(query, (username, password))
 	#stores the results in a variable
 	data = cursor.fetchone()
@@ -200,6 +205,51 @@ def staffLoginAuth():
 		#returns an error message to the html page
 		error = 'Invalid login or email'
 		return render_template('login.html', error=error)
+	
+#Authenticates the register
+@app.route('/employeeRegisterAuth', methods=['GET', 'POST'])
+def employeeRegisterAuth():
+	airline_name = request.form['airline']
+	first_name = request.form['first_name']
+	last_name = request.form['last_name']
+	dob = request.form['dob']
+	username = request.form['username']
+	password = request.form['password']
+	passwordconfirm = request.form['confirmpassword']
+	error = None
+
+	#check password confirmation
+	if(password != passwordconfirm):
+		error = 'Passwords do not match!'
+		return render_template('register.html', error=error)
+	
+	cursor = conn.cursor()
+
+	query = 'SELECT * FROM airline WHERE airline_name = %s'
+	cursor.execute(query, (airline_name))
+	airline = cursor.fetchall()
+	
+	#check if the user already exists.
+	query = 'SELECT * FROM airline_staff WHERE username = %s'
+	cursor.execute(query, (username))
+	data = cursor.fetchone()
+
+	#this is not all the data needed for a cusomter yet!
+	if(not data and airline):
+		session['email'] = username
+		query = 'INSERT INTO airline_staff VALUES (%s, %s, %s, %s, %s, %s)'
+		password = (hashlib.sha256(password.encode('utf-8'))).hexdigest()
+		cursor.execute(query, (username, airline_name, password, first_name, last_name, dob))
+		cursor.close()
+		return redirect('/')
+	else:
+		if(not airline):
+			error = 'Airline is not registered in the system'
+		else: 
+			error = 'Email already in use.'
+		cursor.close()
+		return render_template('register.html', error=error)
+
 
 @app.route('/maintenance', methods=['GET', 'POST'])
 def maintenance():
