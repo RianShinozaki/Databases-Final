@@ -8,7 +8,7 @@ When the user is not logged-in, the following cases should be available in the h
 departure date for one way (departure and return dates for round trip).
     - Will be able to see the flights status based on airline name, flight number, arrival/departure
 date.
-2.  `Register`: 2 types of user registrations (Customer, and Airline Staff) option via forms as mentioned in
+2.  ✅ `Register`: 2 types of user registrations (Customer, and Airline Staff) option via forms as mentioned in
 the part 1 of the project.
 3. ✅ `Login`: 2 types of user login (Customer, and Airline Staff). Users enters their username (email address
 will be used as username for customer) - x, and password - y, via forms on login page. This data is sent

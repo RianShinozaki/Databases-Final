@@ -86,12 +86,14 @@ def customerLoginAuth():
 
 	#cursor used to send queries
 	cursor = conn.cursor()
+
 	#executes query
 	query = 'SELECT * FROM customer WHERE customer_email = %s and password = %s'
 	password = (hashlib.sha256(password.encode('utf-8'))).hexdigest()
 	cursor.execute(query, (username, password))
 	#stores the results in a variable
 	data = cursor.fetchone()
+
 	#use fetchall() if you are expecting more than 1 data row
 	cursor.close()
 	error = None

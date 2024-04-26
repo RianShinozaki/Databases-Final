@@ -25,14 +25,14 @@ VALUES ('bob@gmail.com', 9028557134),
 
 -- airplanes
 INSERT INTO airplane VALUES 
-(1234, 'Jet Blue', 80, 'Boeing', 0001, '2003-04-06', 20),
-(1235, 'Jet Blue', 80, 'Textron', 0303, '2002-02-09', 21),
-(1236, 'Jet Blue', 80, 'Airbus', 2306, '2001-01-04', 22);
+(1234, 'JetBlue', 80, 'Boeing', 0001, '2003-04-06', 20),
+(1235, 'JetBlue', 80, 'Textron', 0303, '2002-02-09', 21),
+(1236, 'JetBlue', 80, 'Airbus', 2306, '2001-01-04', 22);
 
 
 -- airline
 INSERT INTO airline
-VALUES ('Jet Blue', 0, 0, null);
+VALUES ('JetBlue', 0, 0, null);
 
 -- airline staff
 INSERT INTO airline_staff (username, airline_name, password, first_name, last_name, DOB)
