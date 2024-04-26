@@ -11,7 +11,7 @@ INSERT INTO customer
 -- bermudaTriangleLmao
 -- PentagonAndOn
 -- wheeeeee
-VALUES ('bob@gmail.com', '4c69bfd3eae424f113b46374085f51c17e93a8e26820bc07093929eb51cc17ac', 'Bob', 'Duncan', 501, 'Palmetto Drive', null, 'Pasadena', 'California', 91105, '12345678', '2024-04-30', 'United States', '1964-11-12'),
+VALUES ('bob@gmail.com', 'f3dd8d2e5251f3cd495a2c1774285e37b6cf4af381883126282af8f63f40a9be', 'Bob', 'Duncan', 501, 'Palmetto Drive', null, 'Pasadena', 'California', 91105, '12345678', '2024-04-30', 'United States', '1964-11-12'),
 ('amelia@gmail.com', '7913321816497ce982ae5cc8e82659a1ccb139a2854326456e58863b51a3b596', 'Amelia', 'Earhart', 223, 'N Terrace St.', null, 'Atchison', 'Kansas', 66002, '87654321', '2026-07-30', 'Germany', '1897-07-24'),
 ('george@hotmail.com', '6516f422fad75fe6f5c0be624139e5d07b8404de009100c55d22e228b96bc1c8', 'George', 'Bush', 1600, 'Pennsylvania Avenue NW', null, 'Washington', 'DC', 20500, '42358432', '2028-02-15', 'United States', '1946-06-06'),
 ('db@outlook.com', '991514a65caff6dd61ab07287df1bd190eca850470049a67f00441d3aa49dbb5', 'D.B.', 'Cooper', 999, 'Pineapple Drive', null, 'Timbuktu', 'Arkansas', 1235, '93394023', '2024-05-30', 'Canada', null);
