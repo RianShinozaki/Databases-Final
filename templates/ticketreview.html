@@ -9,7 +9,7 @@
 	<title>FlaskFlights</title>
 </head>
 <body>
-    <h2>PURCHASE TICKET NOW</h2>
+    <h2>How was your flight? Leave us a review!</h2>
     <a href="/">Home</a>
     <p>{{flightInfo['name']}}</p>
     <table>
@@ -17,12 +17,17 @@
         <th>Flight Number</th>
         <th>Departure Time</th>
         <th>Arrival Time</th>
+        <th>Customer First Name</th>
+        <th>Customer Last Name</th>
+        <th>Action</th>
         {% for flight in flightInfo %}
             <tr>
                 <td>{{flight['name']}}</td>
                 <td>{{flight['num']}}</td>
                 <td>{{flight['depTime']}}</td>
                 <td>{{flight['arrTime']}}</td>
+                <td>{{flight['customer_firstname']}}</td>
+                <td>{{flight['customer_lastname']}}</td>
             </tr>
         {% endfor %}
     </table>

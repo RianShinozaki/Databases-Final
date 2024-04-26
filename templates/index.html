@@ -35,14 +35,16 @@
 					<th>Arrival Time</th>
 					<th>Action</th>
 				
-				{% for flight in myflights %}
+				{% for flight in myFutureFlights %}
 					<tr>
 						<td>{{flight['name']}}</td>
 						<td>{{flight['num']}}</td>
 						<td>{{flight['depTime']}}</td>
 						<td>{{flight['arrTime']}}</td>
 						<td>
-							<p class = "center-aligned-button"><input type="submit" value="Select"></p>
+							<form action="/deleteTicket" method="POST">
+								<p class = "center-aligned-button"><button type="submit" name = "ticket_id" value = "{{flight['ticket_id']}}">Cancel</button></p>
+							</form>
 						</td>
 					</tr>
 				{% endfor %}
@@ -117,11 +119,41 @@
 						{% if not admin %}
 							<td>
 								<form action="/selectTicket" method="POST">
-									<p class = "center-aligned-button"><button type="submit" name = "flight_num" value = "{{flight['num']}}">Select</button></p>
+									<p class = "center-aligned-button"><button type="submit" name = "flight_num" value = "{{flight['num']}}_{{flight['name']}}_{{flight['depTime']}}">Select</button></p>
 								</form>
 							</td>
 						{% endif %}
+						{% if admin %}
+						<p>Fuck</p>
+						{% endif %}
 					{% endif %}
+				</tr>
+			{% endfor %}
+			</table>
+		</div>
+		{% endif %}
+
+		{% if username %}
+		<div class = "search-results">
+			<p><strong>My past flights</strong></p>
+			<table>
+				<th>Airline Name</th>
+				<th>Flight Number</th>
+				<th>Departure Time</th>
+				<th>Arrival Time</th>
+				<th>Action</th>
+			
+			{% for flight in myPastFlights %}
+				<tr>
+					<td>{{flight['name']}}</td>
+					<td>{{flight['num']}}</td>
+					<td>{{flight['depTime']}}</td>
+					<td>{{flight['arrTime']}}</td>
+					<td>
+						<form action="/reviewTicket" method="POST">
+							<p class = "center-aligned-button"><button type="submit" name = "ticket_id" value = "{{flight['ticket_id']}}">Review</button></p>
+						</form>
+					</td>
 				</tr>
 			{% endfor %}
 			</table>
