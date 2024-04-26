@@ -21,27 +21,35 @@ conn = pymysql.connect(host='localhost',
 
 def homepage_fields():
 	username = session.get('email')
-	myflights = []
+	myFutureFlights = []
+	myPastFlights = []
 	if(session.get('email')):
 		cursor = conn.cursor()
-		query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num;'
+		query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
 		cursor.execute(query, (session.get('email')))
-		myflights = cursor.fetchall()
+		myFutureFlights = cursor.fetchall()
+
+		query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime <= CURRENT_TIMESTAMP();'
+		cursor.execute(query, (session.get('email')))
+		myPastFlights = cursor.fetchall()
+
 		error = None			
-		if(myflights):
+		if(myPastFlights):
 			cursor.close()
 		if(session.get('admin')):
-			return (username, myflights, True)
-	return (username, myflights, False)
+			return (username, myFutureFlights, myPastFlights, True)
+	return (username, myFutureFlights, myPastFlights, False)
 
 @app.route('/')
 def hello():
 	fields = homepage_fields()
-	return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2])
+	return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3])
 
 @app.route('/logout')
 def logout():
 	session.pop('email')
+	if(session.get('admin')):
+		session.pop('admin')
 	return redirect('/')
 
 @app.route('/lookUpFlight', methods=['GET', 'POST'])
@@ -60,10 +68,10 @@ def lookUpFlight():
 	error = None
 	if(data):
 		cursor.close()
-		return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2], flights=data)
+		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], flights = data)
 	else:
 		error = "No flights match those parameters at this time."
-		return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2], error = error)
+		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], flights = data)
 
 @app.route('/login')
 def login():
@@ -137,7 +145,8 @@ def customerRegisterAuth():
 #Takes you to the ticket purchase screen and saves flight_num in question
 @app.route('/selectTicket', methods=['GET', 'POST'])
 def selectTicket():
-	flight_num = request.form['flight_num']
+	flightInfo = request.form['flight_num'].split("_")
+	flight_num = flightInfo[0]
 	session['selected_flight'] = flight_num
 	return redirect('ticketPurchase')
 
@@ -155,6 +164,60 @@ def purchaseTicket():
 #When you press "purchase" on the ticket screen
 @app.route('/confirmPurchaseTicket', methods = ['GET', 'POST'])
 def confirmPurchaseTicket():
+	cursor = conn.cursor()
+	# This doesn't guarantee unique tickets, so we should look into that
+	ticketid = random.randrange(0, 99999)
+
+	#Insert into ticket_purchase using ticket ID
+	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+	cursor.execute(query, (ticketid, session.get('email'), datetime.datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], 100.00))
+
+	#Get more flight info using saved flight num
+	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE num = %s;'
+	cursor.execute(query, (session.get('selected_flight')))
+	flightInfo = cursor.fetchone()
+
+	#Insert into ticket
+	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s)'
+	cursor.execute(query, (ticketid, session.get('selected_flight'), flightInfo['depTime'],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
+	cursor.close()
+
+	session.pop('selected_flight')
+	return redirect('/')
+
+@app.route('/deleteTicket', methods=['GET', 'POST'])
+def deleteTicket():
+	#Doesn't check if ticket is more than 24 hours in the future.
+	ticket_id = request.form['ticket_id']
+	cursor = conn.cursor()
+	query = 'DELETE FROM ticket WHERE ticket_id = %s'
+	cursor.execute(query, ticket_id)
+
+	return redirect('/')
+
+
+
+#Takes you to the ticket review screen and saves flight_num in question
+@app.route('/reviewTicket', methods=['GET', 'POST'])
+def reviewTicket():
+	flight_num = request.form['ticket_id']
+	session['selected_flight'] = flight_num
+	return redirect('ticketReview')
+
+#Page data for the ticket review screen
+@app.route('/ticketReview')
+def ticketReview():
+	cursor = conn.cursor()
+	query = 'SELECT name, num, depTime, arrTime, customer_firstname, customer_lastname FROM ticket NATURAL JOIN flight WHERE ticket_id = %s;'
+	cursor.execute(query, (session.get('selected_flight')))
+	flightInfo = cursor.fetchall()
+	error = None
+	cursor.close()
+	return render_template('ticketreview.html', flightInfo = flightInfo)
+
+#When you press "purchase" on the ticket screen
+@app.route('/confirmReviewTicket', methods = ['GET', 'POST'])
+def confirmReviewTicket():
 	cursor = conn.cursor()
 	# This doesn't guarantee unique tickets, so we should look into that
 	ticketid = random.randrange(0, 99999)
@@ -268,7 +331,7 @@ def reviews():
 	flight_num = request.form["flight_num"]
 
 	cursor = conn.cursor()
-	query = 'SELECT customer_email, rating, comment FROM customer_review NATURAL JOIN flight WHERE departure_date_time = %s AND flight_num = %s AND airplane_id = %s'
+	query = 'SELECT customer_email, rating, comment FROM customer_review NATURAL JOIN flight WHERE departure_date_time = %s AND flight_num = %s AND airline_name = %s'
 	cursor.execute(query, (departure, flight_num, session.get('admin')))
 
 	data = cursor.fetchall()
