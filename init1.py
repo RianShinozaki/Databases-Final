@@ -210,33 +210,27 @@ def reviewTicket():
 @app.route('/ticketReview')
 def ticketReview():
 	cursor = conn.cursor()
-	query = 'SELECT name, num, depTime, arrTime, customer_firstname, customer_lastname FROM ticket NATURAL JOIN flight WHERE ticket_id = %s;'
+	query = 'SELECT airline_name, flight_num, departure_date_time, customer_firstname, customer_lastname FROM ticket NATURAL JOIN flight WHERE ticket_id = %s;'
 	cursor.execute(query, (session.get('selected_flight')))
 	flightInfo = cursor.fetchall()
 	error = None
 	cursor.close()
 	return render_template('ticketreview.html', flightInfo = flightInfo)
 
-#When you press "purchase" on the ticket screen
+#When you press "Submit Review" on the review screen
 @app.route('/confirmReviewTicket', methods = ['GET', 'POST'])
 def confirmReviewTicket():
 	cursor = conn.cursor()
-	# This doesn't guarantee unique tickets, so we should look into that
-	ticketid = random.randrange(0, 99999)
 
-	#Insert into ticket_purchase using ticket ID
-	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('email'), datetime.datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], 100.00))
-
-	#Get more flight info using saved flight num
-	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE num = %s;'
+	#Get more flight info using saved ticket
+	query = 'SELECT flight_num, departure_date_time, airline_name, customer_firstname, customer_lastname FROM ticket NATURAL JOIN flight WHERE ticket_id = %s;'
 	cursor.execute(query, (session.get('selected_flight')))
 	flightInfo = cursor.fetchone()
 
-	#Insert into ticket
-	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('selected_flight'), flightInfo['depTime'],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
-	cursor.close()
+	#Insert into customer_review using all values
+	query = 'INSERT INTO customer_review VALUES (%s, %s, %s, %s, %s, %s)'
+	cursor.execute(query, (flightInfo['flight_num'], flightInfo['departure_date_time'], flightInfo['airline_name'], session.get("email"), request.form['reviewScore'], request.form['reviewComment']))
+
 
 	session.pop('selected_flight')
 	return redirect('/')

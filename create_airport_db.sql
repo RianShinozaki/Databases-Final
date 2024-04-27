@@ -166,6 +166,7 @@ CREATE TABLE cust_phone(
 CREATE TABLE customer_review(
     flight_num 				bigint,
     departure_date_time			datetime,
+    airline_name			varchar(50),
     customer_email			varchar(50),
     rating				bigint,
     comment				varchar(50),
