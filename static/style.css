@@ -47,6 +47,7 @@ a.login {
     margin:auto;
     color:var(--palette-0);
     vertical-align: center;
+    margin:50px;
 }
 
 h1.navigator-header {

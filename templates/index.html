@@ -23,6 +23,9 @@
 		</div>
 	</nav>
 	<main>
+		{% if error %}
+			<p class="error"><strong>Error:</strong> {{error}}</p>
+		{% endif %}
 
 		{% if username %}
 		<h2>Welcome {{username}}</h1>
@@ -31,8 +34,10 @@
 		<div class = "search-results">
 			<h2>Admin Dashboard</h1>
 			<a class = "login" href="/addAirplane">ADD AIRPLANE</a>
-			<a class = "login" href="/addFlight">ADD FLIGHT</a>
-			<a class = "login" href="/addAirport">ADD AIRPORT</a>
+			<a class = "login" href="/login">ADD FLIGHT</a>
+			<a class = "login" href="/login">ADD AIRPORT</a>
+			<a class = "login" href="maintenance"> Schedule Maintenance!</a>
+
 		</div>
 		{% endif %}
 
@@ -104,9 +109,7 @@
 				<p class = "center-aligned-button"><input type="submit" value="Search Flights"></p>
 
 				
-				<!--{% if error %}
-					<p class="error"><strong>Error:</strong> {{error}}</p>
-				{% endif %}-->
+				
 			</form>
 			
 			
@@ -176,10 +179,6 @@
 		</div>
 		{% endif %}
 
-		{% if admin %}
-			<h2> Schedule maintenance today! </h2>
-			<a href="maintenance"> Schedule Maintenance!</a>
-		{% endif %}
 
 	</main>
 </body>
