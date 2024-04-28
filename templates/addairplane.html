@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./static/style.css"/>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<title>FlaskFlights</title>
+</head>
+<body>
+    <h2>Input new airplane information for {{airline}}</h2>
+    <a href="/">Home</a>
+
+    <form action="/confirmAddAirplane" method="POST">
+        <input type="number" name = "num_seats" placeholder="Number of Seats" inputmode = numeric required /> </br>
+        <input type="text" name = "manufacturing_company" placeholder="Manufacturing Company" required/> </br>
+        <input type="number" name = "model_num" placeholder="Model Number" inputmode = numeric required /> </br>
+        <label for="manufacturing_date">Manufacturing Date:</label>
+        <input type="date" id="manufacturing_date" name="manufacturing_date" />
+
+        <input type="submit" value = "Add Airplane" />
+    </form>
+                    
+
+</body>

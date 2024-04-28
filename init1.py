@@ -421,6 +421,31 @@ def reviews():
 		error = "There are no reviews for this flight yet."
 		return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2], error = error)
 	
+#Page data for the ticket purchase screen
+@app.route('/addAirplane')
+def addAirplane():
+	return render_template('addairplane.html', airline = session.get("admin"))
+
+#When you press "purchase" on the ticket screen
+@app.route('/confirmAddAirplane', methods = ['GET', 'POST'])
+def confirmAddAirplane():
+
+	cursor = conn.cursor()
+	airplane_id = random.randrange(0, 99999)
+	query = 'SELECT * FROM airplane WHERE airplane_id = %s'
+	cursor.execute(query, (airplane_id))
+	exist = cursor.fetchall()
+	while exist:
+		airplane_id = random.randrange(0, 99999)
+		cursor.execute(query, (airplane_id))
+		exist = cursor.fetchall()
+
+	#Insert into airplane
+	query = 'INSERT INTO airplane VALUES (%s, %s, %s, %s, %s, %s, %s)'
+	cursor.execute(query, (airplane_id, session.get('admin'), request.form['num_seats'], request.form['manufacturing_company'], request.form['model_num'], request.form['manufacturing_date'], 0))
+	cursor.close()
+
+	return redirect('/')
 
 	
 """
