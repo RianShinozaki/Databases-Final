@@ -89,7 +89,7 @@ forms. The application should prevent unauthorized users from doing this action.
 6. `View flight ratings`: Airline Staff will be able to see each flight’s average ratings and all the comments
 and ratings of that flight given by the customers.
 
-7. `Schedule Maintenance`: Airline staff should be able to schedule maintenance (by providing start date
+7. ✅ `Schedule Maintenance`: Airline staff should be able to schedule maintenance (by providing start date
 and time and end date and time) for a particular airplane (identified by airline name and airplane id).
 Airplanes under maintenance cannot be assigned to a flight during the maintenance period.
 
