@@ -41,19 +41,19 @@ specify a range of dates, specify destination and/or source airport name or city
 2. ✅ `Search for flights`: Search for future flights (one way or round trip) based on source city/airport name,
 destination city/airport name, dates (departure or return).
 
-3. `Purchase tickets`: Customer chooses a flight and purchase ticket for this flight, providing all the
+3. ✅ `Purchase tickets`: Customer chooses a flight and purchase ticket for this flight, providing all the
 needed data, via forms. You may find it easier to implement this along with a use case to search for
 flights.
 
-4. `Cancel Trip`: Customer chooses a purchased ticket for a flight that will take place more than 24 hours
+4. ✅ `Cancel Trip`: Customer chooses a purchased ticket for a flight that will take place more than 24 hours
 in the future and cancel the purchase. After cancellation, the ticket will no longer belong to the
 customer. The ticket will be available again in the system and purchasable by other customers.
 
-5. `Give Ratings and Comment on previous flights`: Customer will be able to rate and comment on their
+5. ✅ `Give Ratings and Comment on previous flights`: Customer will be able to rate and comment on their
 previous flights (for which he/she purchased tickets and already took that flight) for the airline they
 logged in.
 
-6. `Track My Spending`: Default view will be total amount of money spent in the past year and a bar
+6. ✅ `Track My Spending`: Default view will be total amount of money spent in the past year and a bar
 chart/table showing month wise money spent for last 6 months. He/she will also have option to specify
 a range of dates to view total amount of money spent within that range and a bar chart/table showing
 month wise money spent within that range.
@@ -89,7 +89,7 @@ forms. The application should prevent unauthorized users from doing this action.
 6. `View flight ratings`: Airline Staff will be able to see each flight’s average ratings and all the comments
 and ratings of that flight given by the customers.
 
-7. `Schedule Maintenance`: Airline staff should be able to schedule maintenance (by providing start date
+7. ✅ `Schedule Maintenance`: Airline staff should be able to schedule maintenance (by providing start date
 and time and end date and time) for a particular airplane (identified by airline name and airplane id).
 Airplanes under maintenance cannot be assigned to a flight during the maintenance period.
 

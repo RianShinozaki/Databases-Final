@@ -310,6 +310,7 @@ def employeeRegisterAuth():
 	#this is not all the data needed for a cusomter yet!
 	if(not data and airline):
 		session['email'] = username
+		session['admin'] = airline
 		query = 'INSERT INTO airline_staff VALUES (%s, %s, %s, %s, %s, %s)'
 		password = (hashlib.sha256(password.encode('utf-8'))).hexdigest()
 		cursor.execute(query, (username, airline_name, password, first_name, last_name, dob))
