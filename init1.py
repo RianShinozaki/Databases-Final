@@ -31,6 +31,7 @@ def homepage_fields():
 
 		query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime <= CURRENT_TIMESTAMP();'
 		cursor.execute(query, (session.get('email')))
+		cursor.close()
 		myPastFlights = cursor.fetchall()
 
 		error = None			
@@ -168,7 +169,16 @@ def purchaseTicket():
 def confirmPurchaseTicket():
 	cursor = conn.cursor()
 	# This doesn't guarantee unique tickets, so we should look into that
+ 
+	# fix?
 	ticketid = random.randrange(0, 99999)
+	query = 'SELECT * FROM ticket WHERE ticket_id = %s'
+	cursor.execute(query, (ticketid))
+	exist = cursor.fetchall()
+	while exist:
+		ticketid = random.randrange(0, 99999)
+		cursor.execute(query, (ticketid))
+		exist = cursor.fetchall()
 
 	#Insert into ticket_purchase using ticket ID
 	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
@@ -198,7 +208,6 @@ def deleteTicket():
 	return redirect('/')
 
 
-
 #Takes you to the ticket review screen and saves flight_num in question
 @app.route('/reviewTicket', methods=['GET', 'POST'])
 def reviewTicket():
@@ -217,6 +226,7 @@ def ticketReview():
 	cursor.close()
 	return render_template('ticketreview.html', flightInfo = flightInfo)
 
+
 #When you press "Submit Review" on the review screen
 @app.route('/confirmReviewTicket', methods = ['GET', 'POST'])
 def confirmReviewTicket():
@@ -234,6 +244,8 @@ def confirmReviewTicket():
 
 	session.pop('selected_flight')
 	return redirect('/')
+
+
 
 @app.route('/employeeLoginAuth', methods=['GET', 'POST'])
 def employeeLoginAuth():
@@ -310,11 +322,67 @@ def employeeRegisterAuth():
 		return render_template('register.html', error=error)
 
 
-@app.route('/maintenance', methods=['GET', 'POST'])
+@app.route('/maintenance')
 def maintenance():
+	fields = homepage_fields()
+	return render_template("maintenance.html", username = fields[0], admin = fields[3])
+
+@app.route('/maintenanceForm', methods=['GET', 'POST'])
+def maintenanceForm():
+	# things to consider:
+	# 	- start date in the past
+	#   - end date before start date
+
+	fields = homepage_fields()
+
 	start = request.form['start']
 	end = request.form['end']
 	id = request.form['id']
+	airline = session.get('admin')
+	error = None
+	noID = None
+
+	if not airline: 
+		return redirect('/')
+	
+	cursor = conn.cursor()
+
+	query = 'SELECT * FROM airplane WHERE airplane_id = %s'
+	cursor.execute(query, (id))
+	data = cursor.fetchall()
+	if not data:
+		error = "No plane exists with that ID. Here are your airline's current planes:"
+		query = 'SELECT airplane_id FROM airplane WHERE airline_name = %s'
+		cursor.execute(query, (airline))
+		data = cursor.fetchall()
+		cursor.close()
+		return render_template('maintenance.html', username = fields[0], admin = fields[3], noID = error, maintenance = data)
+
+
+	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND ((start_date BETWEEN %s AND %s) OR (end_date BETWEEN %s AND %s))'
+	cursor.execute(query, (id, airline, start, end, start, end))
+	data = cursor.fetchall()
+
+	if data:
+		cursor.close()
+		error = "There is already maintenance scheduled for the following time frame(s)"
+		return render_template('maintenance.html', username = fields[0], admin = fields[3], error = error, maintenance = data)
+
+	maintenance_id = random.randrange(0, 99999)
+	query = 'SELECT * FROM ticket WHERE ticket_id = %s'
+	cursor.execute(query, (maintenance_id))
+	exist = cursor.fetchall()
+	while exist:
+		maintenance_id = random.randrange(0, 99999)
+		cursor.execute(query, (maintenance_id))
+		exist = cursor.fetchall()
+
+	query = 'INSERT INTO maintenance VALUES (%s, %s, %s, %s, %s)'
+	cursor.execute(query, (maintenance_id, id, airline, start, end))
+	cursor.close()
+
+	data = {'start_date' : start, 'end_date' : end, 'id' : id}
+	return render_template('maintenance.html', username = fields[0], admin = fields[3], maintenance = data, success = True)
 
 	# set up a view & ensure the maintenances on the same
     # plane don't overlap
@@ -331,9 +399,9 @@ def reviews():
 	cursor.execute(query, (departure, flight_num, session.get('admin')))
 
 	data = cursor.fetchall()
+	cursor.close()
 	error = None
 	if(data):
-		cursor.close()
 		# fix this
 		return render_template('reviews.html', username = fields[0], myflights = fields[1], admin = fields[2], flights=data)
 	else:

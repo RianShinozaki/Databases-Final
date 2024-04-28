@@ -61,6 +61,7 @@ CREATE TABLE airplane(
 CREATE TABLE maintenance(
 	maintenance_id		bigint,
 	airplane_id			bigint,
+    airline_name        varchar(50),
 	start_date			datetime,
 	end_date			datetime,	
 	
