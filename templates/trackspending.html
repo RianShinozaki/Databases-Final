@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./static/style.css"/>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<title>FlaskFlights</title>
+</head>
+<body>
+    <style type="text/css">
+        table, th, td{
+            border: 1px solid black;
+        }
+    </style>
+    <h2>TRACK MY SPENDING</h2>
+    <a href="/">Home</a>
+
+    <form action="/adjustTrackSpending" method="POST">
+        <label for="start">Starting Range:</label>
+        <input type="month" id="start" name="start" value="{{startingMonth}}" />
+
+        <label for="start">Ending Range:</label>
+        <input type="month" id="end" name="end" value="{{endingMonth}}" />
+
+        <input type="submit" value = Refresh />
+
+    </form>
+
+    <div class = "search-results">
+        <p><strong>Spending by Month</strong></p>
+        <table>
+            <th>Month</th>
+            <th>Spending</th>
+        
+        {% for flight in ordered_data %}
+            <tr>
+                <td>{{flight[0]}}</td>
+                <td>{{flight[1]}}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+</body>

@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, session, url_for, redirect
 import pymysql.cursors
 import hashlib
 import random
-import datetime
+from datetime import datetime, timedelta
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -76,6 +76,8 @@ def lookUpFlight():
 @app.route('/login')
 def login():
 	return render_template('login.html')
+
+### CUSTOMER USE CASES ###
 
 #Authenticates the login
 @app.route('/customerLoginAuth', methods=['GET', 'POST'])
@@ -197,8 +199,6 @@ def deleteTicket():
 
 	return redirect('/')
 
-
-
 #Takes you to the ticket review screen and saves flight_num in question
 @app.route('/reviewTicket', methods=['GET', 'POST'])
 def reviewTicket():
@@ -234,6 +234,54 @@ def confirmReviewTicket():
 
 	session.pop('selected_flight')
 	return redirect('/')
+
+@app.route('/trackSpending', methods=['GET', 'POST'])
+def trackSpending():
+	currentDateTime = datetime.now()
+	currentMonth = str(currentDateTime.month).zfill(2)
+	currentYear = str(currentDateTime.year)
+	currentMonthYear = currentYear + "-" + currentMonth
+
+	beginRangeDateTime = datetime.now() + timedelta(days = -182)
+	beginRangeMonth = str(beginRangeDateTime.month).zfill(2)
+	beginRangeYear = str(beginRangeDateTime.year)
+	beginRangeMonthYear = beginRangeYear + "-" + beginRangeMonth
+
+	cursor = conn.cursor()
+	query = 'SELECT purchase_date_time, sold_price FROM ticket_purchase WHERE customer_email = %s AND purchase_date_time between %s and %s;'
+	cursor.execute(query, (session.get('email'), beginRangeDateTime, currentDateTime))
+	ticketInfo = cursor.fetchall()
+
+	monthlySpendingDict = {}
+
+	increment = timedelta(days=31)
+	beginRangeDateTimeIter = beginRangeDateTime
+	while(beginRangeDateTimeIter < currentDateTime):
+		
+		month = beginRangeDateTimeIter.month
+		year = beginRangeDateTimeIter.year
+		monthYear = str(year) + "-" + str(month).zfill(2)
+		monthlySpendingDict[monthYear] = 0
+		beginRangeDateTimeIter += increment
+
+
+	for ticket in ticketInfo:
+		month = ticket['purchase_date_time'].month
+		year = ticket['purchase_date_time'].year
+		monthYear = str(year) + "-" + str(month).zfill(2)
+		if(monthYear in monthlySpendingDict):
+			monthlySpendingDict[monthYear] += ticket['sold_price']
+
+	ordered_data = sorted(monthlySpendingDict.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m'), reverse=True)
+	print(ordered_data[0][0])
+
+	for flight in ordered_data:
+		print(flight[0])
+		print(flight[1])
+
+	return render_template('trackspending.html', startingMonth = beginRangeMonthYear, endingMonth = currentMonthYear, ordered_data = ordered_data)
+
+### EMPLOYEE USE CASES ###
 
 @app.route('/employeeLoginAuth', methods=['GET', 'POST'])
 def employeeLoginAuth():
@@ -340,6 +388,9 @@ def reviews():
 		error = "There are no reviews for this flight yet."
 		# fix this
 		return render_template('reviews.html', username = fields[0], myflights = fields[1], admin = fields[2], flights=data)
+	
+
+
 	
 """
 #Define route for login
