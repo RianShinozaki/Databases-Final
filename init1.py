@@ -237,6 +237,7 @@ def confirmReviewTicket():
 
 
 def trackSpendingLogic(currentDateTime, beginRangeDateTime):
+	
 	startMonth = beginRangeDateTime.month
 	startYear = beginRangeDateTime.year
 
@@ -257,7 +258,7 @@ def trackSpendingLogic(currentDateTime, beginRangeDateTime):
 	monthYear = str(yearIter) + "-" + str(monthIter).zfill(2)
 	monthlySpendingDict[monthYear] = 0
 	
-	while(monthIter != int(endMonth) or yearIter != int(endYear)):
+	while(monthIter < int(endMonth) or yearIter < int(endYear)):
 		monthIter += 1
 		if(monthIter == 13):
 			monthIter = 1
@@ -284,6 +285,9 @@ def trackSpendingLogic(currentDateTime, beginRangeDateTime):
 	beginRangeYear = str(beginRangeDateTime.year)
 	beginRangeMonthYear = beginRangeYear + "-" + beginRangeMonth
 
+	if(beginRangeDateTime >= currentDateTime):
+		return render_template('trackspending.html', startingMonth = beginRangeMonthYear, endingMonth = beginRangeMonthYear, ordered_data = [], error = "End date must be after beginning date")
+	
 	return render_template('trackspending.html', startingMonth = beginRangeMonthYear, endingMonth = currentMonthYear, ordered_data = ordered_data)
 
 
