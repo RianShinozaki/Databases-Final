@@ -154,7 +154,11 @@
 
 		{% if username %}
 		<div class = "search-results">
-			<p><strong>My past flights</strong></p>
+			{% if admin %}
+				<p><strong>Past airline flights</strong></p>
+				{% elif username %}
+				<p><strong>My past flights</strong></p>
+				{% endif %}
 			<table>
 				<th>Airline Name</th>
 				<th>Flight Number</th>

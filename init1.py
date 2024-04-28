@@ -26,12 +26,23 @@ def homepage_fields():
 
 	if(session.get('email')):
 		cursor = conn.cursor()
-		query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
-		cursor.execute(query, (session.get('email')))
+		if(session.get('admin')):
+			query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE name = %s AND depTime > CURRENT_TIMESTAMP();'
+			cursor.execute(query, (session.get('admin')))
+			
+		else:
+			query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
+			cursor.execute(query, (session.get('email')))
+		
+		
 		myFutureFlights = cursor.fetchall()
 
-		query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime <= CURRENT_TIMESTAMP();'
-		cursor.execute(query, (session.get('email')))
+		if(session.get('admin')):
+			query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE name = %s AND depTime <= CURRENT_TIMESTAMP();'
+			cursor.execute(query, (session.get('admin')))
+		else:
+			query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime <= CURRENT_TIMESTAMP();'
+			cursor.execute(query, (session.get('email')))
 		cursor.close()
 		myPastFlights = cursor.fetchall()
 
