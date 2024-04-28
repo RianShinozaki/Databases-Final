@@ -23,6 +23,7 @@ def homepage_fields():
 	username = session.get('email')
 	myFutureFlights = []
 	myPastFlights = []
+
 	if(session.get('email')):
 		cursor = conn.cursor()
 		query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'

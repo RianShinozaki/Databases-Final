@@ -23,12 +23,27 @@
 		</div>
 	</nav>
 	<main>
+
+		{% if username %}
+		<h2>Welcome {{username}}</h1>
+		
+		{% if admin %}
+		<div class = "search-results">
+			<h2>Admin Dashboard</h1>
+			<a class = "login" href="/addAirplane">ADD AIRPLANE</a>
+			<a class = "login" href="/addFlight">ADD FLIGHT</a>
+			<a class = "login" href="/addAirport">ADD AIRPORT</a>
+		</div>
+		{% endif %}
+
 		<form action="/post" method="POST">
-			{% if username %}
-			<h2>Welcome {{username}}</h1>
 			
 			<div class = "search-results">
+				{% if admin %}
+				<p><strong>Future airline flights</strong></p>
+				{% elif username %}
 				<p><strong>My future flights</strong></p>
+				{% endif %}
 				<table>
 					<th>Airline Name</th>
 					<th>Flight Number</th>
