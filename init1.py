@@ -235,35 +235,37 @@ def confirmReviewTicket():
 	session.pop('selected_flight')
 	return redirect('/')
 
-@app.route('/trackSpending', methods=['GET', 'POST'])
-def trackSpending():
-	currentDateTime = datetime.now()
-	currentMonth = str(currentDateTime.month).zfill(2)
-	currentYear = str(currentDateTime.year)
-	currentMonthYear = currentYear + "-" + currentMonth
 
-	beginRangeDateTime = datetime.now() + timedelta(days = -182)
-	beginRangeMonth = str(beginRangeDateTime.month).zfill(2)
-	beginRangeYear = str(beginRangeDateTime.year)
-	beginRangeMonthYear = beginRangeYear + "-" + beginRangeMonth
+def trackSpendingLogic(currentDateTime, beginRangeDateTime):
+	startMonth = beginRangeDateTime.month
+	startYear = beginRangeDateTime.year
+
+	endMonth = currentDateTime.month
+	endYear = currentDateTime.year
 
 	cursor = conn.cursor()
 	query = 'SELECT purchase_date_time, sold_price FROM ticket_purchase WHERE customer_email = %s AND purchase_date_time between %s and %s;'
 	cursor.execute(query, (session.get('email'), beginRangeDateTime, currentDateTime))
 	ticketInfo = cursor.fetchall()
+	print(ticketInfo)
 
 	monthlySpendingDict = {}
 
-	increment = timedelta(days=31)
-	beginRangeDateTimeIter = beginRangeDateTime
-	while(beginRangeDateTimeIter < currentDateTime):
-		
-		month = beginRangeDateTimeIter.month
-		year = beginRangeDateTimeIter.year
-		monthYear = str(year) + "-" + str(month).zfill(2)
-		monthlySpendingDict[monthYear] = 0
-		beginRangeDateTimeIter += increment
+	monthIter = int(startMonth)
+	yearIter = int(startYear)
 
+	monthYear = str(yearIter) + "-" + str(monthIter).zfill(2)
+	monthlySpendingDict[monthYear] = 0
+	
+	while(monthIter != int(endMonth) or yearIter != int(endYear)):
+		monthIter += 1
+		if(monthIter == 13):
+			monthIter = 1
+			yearIter += 1
+
+		monthYear = str(yearIter) + "-" + str(monthIter).zfill(2)
+		monthlySpendingDict[monthYear] = 0
+		
 
 	for ticket in ticketInfo:
 		month = ticket['purchase_date_time'].month
@@ -273,13 +275,64 @@ def trackSpending():
 			monthlySpendingDict[monthYear] += ticket['sold_price']
 
 	ordered_data = sorted(monthlySpendingDict.items(), key = lambda x:datetime.strptime(x[0], '%Y-%m'), reverse=True)
-	print(ordered_data[0][0])
 
-	for flight in ordered_data:
-		print(flight[0])
-		print(flight[1])
+	currentMonth = str(currentDateTime.month).zfill(2)
+	currentYear = str(currentDateTime.year)
+	currentMonthYear = currentYear + "-" + currentMonth
+
+	beginRangeMonth = str(beginRangeDateTime.month).zfill(2)
+	beginRangeYear = str(beginRangeDateTime.year)
+	beginRangeMonthYear = beginRangeYear + "-" + beginRangeMonth
 
 	return render_template('trackspending.html', startingMonth = beginRangeMonthYear, endingMonth = currentMonthYear, ordered_data = ordered_data)
+
+
+@app.route('/trackSpendingRefresh', methods=['GET', 'POST'])
+def trackSpendingRefresh():
+	begin = request.form['start']
+	end = request.form['end']
+
+	beginDateTime = datetime.strptime(begin, "%Y-%m")
+	endDateTime = getLastDayOfMonth(end)
+
+	return trackSpendingLogic(endDateTime, beginDateTime)
+
+@app.route('/trackSpending', methods=['GET', 'POST'])
+def trackSpending():
+	nowMonthYear = str(datetime.now().year) + "-" + str(datetime.now().month)
+	return trackSpendingLogic(getLastDayOfMonth(nowMonthYear), getSixMonthsAgo(nowMonthYear))
+
+def getLastDayOfMonth(monthYear):
+	dateTime = datetime.strptime(monthYear, "%Y-%m")
+	newMonth = int(dateTime.month)+1
+	year = int(dateTime.year)
+	newYear = year
+	if(newMonth == 13):
+		newMonth = 1
+		newYear = year + 1
+
+	newMonthYear = str(newYear) + "-" + str(newMonth)
+	newDateTime = datetime.strptime(newMonthYear, "%Y-%m")
+	newDateTime += timedelta(days=-1)
+
+	return(newDateTime)
+
+def getSixMonthsAgo(monthYear):
+	dateTime = datetime.strptime(monthYear, "%Y-%m")
+	newMonth = int(dateTime.month)
+	year = int(dateTime.year)
+	newYear = year
+	for i in range(4):
+		newMonth -= 1
+		if(newMonth == 0):
+			newMonth = 12
+			newYear -= 1
+
+	newMonthYear = str(newYear) + "-" + str(newMonth)
+	newDateTime = datetime.strptime(newMonthYear, "%Y-%m")
+	newDateTime += timedelta(days=-1)
+
+	return(newDateTime)
 
 ### EMPLOYEE USE CASES ###
 
