@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, session, url_for, redirect
 import pymysql.cursors
 import hashlib
 import random
-import datetime
+from datetime import datetime, timedelta
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -77,6 +77,8 @@ def lookUpFlight():
 @app.route('/login')
 def login():
 	return render_template('login.html')
+
+### CUSTOMER USE CASES ###
 
 #Authenticates the login
 @app.route('/customerLoginAuth', methods=['GET', 'POST'])
@@ -208,6 +210,7 @@ def deleteTicket():
 	return redirect('/')
 
 
+
 #Takes you to the ticket review screen and saves flight_num in question
 @app.route('/reviewTicket', methods=['GET', 'POST'])
 def reviewTicket():
@@ -244,8 +247,6 @@ def confirmReviewTicket():
 
 	session.pop('selected_flight')
 	return redirect('/')
-
-
 
 @app.route('/employeeLoginAuth', methods=['GET', 'POST'])
 def employeeLoginAuth():
@@ -408,6 +409,9 @@ def reviews():
 		error = "There are no reviews for this flight yet."
 		# fix this
 		return render_template('reviews.html', username = fields[0], myflights = fields[1], admin = fields[2], flights=data)
+	
+
+
 	
 """
 #Define route for login
