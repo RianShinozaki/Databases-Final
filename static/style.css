@@ -99,7 +99,7 @@ div.flight-search-fields-right {
     position: relative;
 }
 
-.search-results {
+div.input-form {
     
     background-color:var(--palette-2);
     margin-top: 40px;
@@ -108,5 +108,25 @@ div.flight-search-fields-right {
     max-width: 600px;
     margin:auto;
     color: var(--palette-4);
+}
+
+div.input-form-elements {
+    
+    background-color:var(--palette-2);
+    margin-top: 40px;
+    padding-left: 20px;
+    border-radius: 15px;
+    max-width: 600px;
+    margin:auto;
+    color: var(--palette-4);
+    
+    display: block;
+}
+
+.search-results {
+    
+    float: left;
+    clear: left;
+    display:inline
     
 }

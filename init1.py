@@ -461,18 +461,18 @@ def addFlight():
 def confirmAddFlight():
 
 	cursor = conn.cursor()
-	airplane_id = random.randrange(0, 99999)
-	query = 'SELECT * FROM airplane WHERE airplane_id = %s'
-	cursor.execute(query, (airplane_id))
+	flight_num = random.randrange(0, 999)
+	query = 'SELECT * FROM airplane WHERE flight_num = %s, departure_date_time = %s, airline_name = %s'
+	cursor.execute(query, (flight_num, request.form['departure_date_time'], request.form['arrival_date_time']))
 	exist = cursor.fetchall()
 	while exist:
-		airplane_id = random.randrange(0, 99999)
-		cursor.execute(query, (airplane_id))
+		flight_num = random.randrange(0, 999)
+		cursor.execute(query, (flight_num, request.form['departure_date_time'], request.form['arrival_date_time']))
 		exist = cursor.fetchall()
 
 	#Insert into airplane
-	query = 'INSERT INTO airplane VALUES (%s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (airplane_id, session.get('admin'), request.form['num_seats'], request.form['manufacturing_company'], request.form['model_num'], request.form['manufacturing_date'], 0))
+	query = 'INSERT INTO flight VALUES (%s, %s, %s, %s, %s, %s)'
+	cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin'), request.form['airplane_id'], request.form['base_price'], "on-time"))
 	cursor.close()
 
 	return redirect('/')
