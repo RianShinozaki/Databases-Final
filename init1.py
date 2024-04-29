@@ -421,7 +421,19 @@ def reviews():
 		return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2], error = error)
 	
 
+
+
+@app.route('/frequentCustomers', methods=['GET','POST'])
+def frequentCustomers():
+
+	cursor = conn.cursor()
+	query = 'SELECT customer_firstname, customer_lastname, COUNT(ticket_id) as flight_amt FROM ticket WHERE airline_name = %s GROUP BY customer_firstname, customer_lastname ORDER BY COUNT(ticket_id) DESC'
+	cursor.execute(query, (session.get('admin')))
+
+	data = cursor.fetchall()
+
 	
+
 """
 #Define route for login
 @app.route('/login')

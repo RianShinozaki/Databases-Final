@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./static/style.css"/>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<title>FlaskFlights</title>
+</head>
+<body>
+    <a href="/">Home</a>
+    <h2>Here are the reviews for Flight # {{num}} which departed on {{departure}} :</h2>
+    {% for review in flights %}
+        <td>Email: {{review['customer_email']}}</td>
+        <td>Rating: {{review['rating']}} out of 10</td>
+        <td>Comment: {{review['comment']}}</td>
+    {% endfor %}
+</body>

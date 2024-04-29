@@ -109,6 +109,7 @@ CREATE TABLE staff_email(
 CREATE TABLE ticket(
     ticket_id				bigint,
     flight_num				bigint,
+    airline_name            varchar(50),
     departure_date_time			datetime,
     customer_email              varchar(50),
     customer_firstname			varchar(50),
