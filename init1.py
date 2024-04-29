@@ -237,7 +237,6 @@ def ticketReview():
 	query = 'SELECT airline_name, flight_num, departure_date_time, customer_firstname, customer_lastname FROM ticket NATURAL JOIN flight WHERE ticket_id = %s;'
 	cursor.execute(query, (session.get('selected_flight')))
 	flightInfo = cursor.fetchall()
-	error = None
 	cursor.close()
 	return render_template('ticketreview.html', flightInfo = flightInfo)
 
@@ -404,9 +403,9 @@ def maintenanceForm():
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews():
 	fields = homepage_fields()
-
-	departure = request.form["departure"]
-	flight_num = request.form["flight_num"]
+	
+	flight_num = request.form['num']
+	departure = request.form['depTime']
 
 	cursor = conn.cursor()
 	query = 'SELECT customer_email, rating, comment FROM customer_review NATURAL JOIN flight WHERE departure_date_time = %s AND flight_num = %s AND airline_name = %s'
@@ -419,9 +418,8 @@ def reviews():
 		return render_template('reviews.html', username = fields[0], admin = fields[2], num=flight_num, date=departure, flights=data)
 	else:
 		error = "There are no reviews for this flight yet."
-		return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2], error = error)
+		return render_template('index.html', username = fields[0], myflights = fields[1], myPastFlights=fields[2], admin = fields[2], error = error)
 	
-
 	
 """
 #Define route for login

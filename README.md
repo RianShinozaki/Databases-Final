@@ -86,7 +86,7 @@ she/he will be able to see all the airplanes owned by the airline he/she works f
 5. `Add new airport in the system`: He or she adds a new airport, providing all the needed data, via
 forms. The application should prevent unauthorized users from doing this action.
 
-6. `View flight ratings`: Airline Staff will be able to see each flight’s average ratings and all the comments
+6. ✅ `View flight ratings`: Airline Staff will be able to see each flight’s average ratings and all the comments
 and ratings of that flight given by the customers.
 
 7. ✅ `Schedule Maintenance`: Airline staff should be able to schedule maintenance (by providing start date

@@ -36,7 +36,7 @@
 			<a class = "login" href="/addAirplane">ADD AIRPLANE</a>
 			<a class = "login" href="/login">ADD FLIGHT</a>
 			<a class = "login" href="/login">ADD AIRPORT</a>
-			<a class = "login" href="maintenance"> Schedule Maintenance!</a>
+			<a class = "login" href="maintenance"> MAINTENANCE</a>
 
 		</div>
 		{% endif %}
@@ -151,10 +151,10 @@
 
 		{% if username %}
 		<div class = "search-results">
-			{% if admin %}
-				<p><strong>Past airline flights</strong></p>
+				{% if admin %}
+					<p><strong>Past airline flights</strong></p>
 				{% elif username %}
-				<p><strong>My past flights</strong></p>
+					<p><strong>My past flights</strong></p>
 				{% endif %}
 			<table>
 				<th>Airline Name</th>
@@ -170,9 +170,16 @@
 					<td>{{flight['depTime']}}</td>
 					<td>{{flight['arrTime']}}</td>
 					<td>
-						<form action="/reviewTicket" method="POST">
-							<p class = "center-aligned-button"><button type="submit" name = "ticket_id" value = "{{flight['ticket_id']}}">Review</button></p>
-						</form>
+						{% if admin %}
+							<form action="/reviews" method="POST">
+								<input name="num" type="hidden" value="{{flight['num']}}"></input>
+								<p class = "center-aligned-button"><button type="submit" name = "depTime" value ="{{flight['depTime']}}">See Reviews</button></p>
+							</form>
+						{% elif username %}
+							<form action="/reviewTicket" method="POST">
+								<p class = "center-aligned-button"><button type="submit" name = "ticket_id" value = "{{flight['ticket_id']}}">Review</button></p>
+							</form>
+						{% endif %}
 					</td>
 				</tr>
 			{% endfor %}
