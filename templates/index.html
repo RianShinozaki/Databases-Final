@@ -187,6 +187,29 @@
 		{% endif %}
 
 
+		{% if admin %}
+		<div class = "search-results">
+			<p><strong>Frequent Fliers</strong></p>
+			<table>
+				<th>Customer Name</th>
+				<th># of Flights</th>
+				<th>Other Flights</th>
+			
+			{% for fliers in frequentFliers %}
+				<tr>
+					<td>{{fliers['customer_lastname']}}, {{fliers['customer_firstname']}}</td>
+					<td>{{fliers['flight_amt']}}</td>
+					<td>
+						<form action="/frequency" method="POST">
+							<input name="first" type="hidden" value="{{fliers['customer_firstname']}}"></input>
+							<p class = "center-aligned-button"><button type="submit" name = "last" value ="{{fliers['customer_lastname']}}">See More Flights</button></p>
+						</form>
+					</td>
+				</tr>
+			{% endfor %}
+			</table>
+		</div>
+		{% endif %}
 	</main>
 </body>
 
