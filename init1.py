@@ -27,11 +27,11 @@ def homepage_fields():
 	if(session.get('email')):
 		cursor = conn.cursor()
 		if(session.get('admin')):
-			query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE name = %s AND depTime > CURRENT_TIMESTAMP();'
+			query = 'SELECT name, num, depTime, arrTime, status FROM lookUpFlight WHERE name = %s AND depTime > CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('admin')))
 			
 		else:
-			query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
+			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('email')))
 		
 		
@@ -502,14 +502,24 @@ def newAirport():
 
 	if data:
 		error = "This airport already exists"
+		cursor.close()
 		return render_template('/addAirport.html', error=error)
 	
 	query = 'INSERT INTO airport VALUES (%s, %s, %s, %s, %s, %s)'
 	cursor.execute(query, (request.form['code'], request.form['name'], request.form['city'], request.form['country'], request.form['terminals'], request.form['type']))
-
+	cursor.close()
 	return redirect('/')
 
 
+@app.route('/changeStatus', methods=['GET', 'POST'])
+def changeStatus():
+	cursor = conn.cursor()
+	query = 'UPDATE flight SET status = %s WHERE flight_num = %s AND departure_date_time = %s AND airline_name = %s'
+	cursor.execute(query, (request.form['status'], request.form['num'], request.form['departure'], session.get('admin')))
+	cursor.close()
+
+	fields = homepage_fields()
+	return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4])
 """
 #Define route for login
 @app.route('/login')

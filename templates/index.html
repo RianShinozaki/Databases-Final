@@ -40,39 +40,52 @@
 
 		</div>
 		{% endif %}
-
-		<form action="/post" method="POST">
 			
-			<div class = "search-results">
-				{% if admin %}
-				<p><strong>Future airline flights</strong></p>
-				{% elif username %}
-				<p><strong>My future flights</strong></p>
-				{% endif %}
-				<table>
-					<th>Airline Name</th>
-					<th>Flight Number</th>
-					<th>Departure Time</th>
-					<th>Arrival Time</th>
-					<th>Action</th>
-				
-				{% for flight in myFutureFlights %}
-					<tr>
-						<td>{{flight['name']}}</td>
-						<td>{{flight['num']}}</td>
-						<td>{{flight['depTime']}}</td>
-						<td>{{flight['arrTime']}}</td>
-						<td>
+		<div class = "search-results">
+			{% if admin %}
+			<p><strong>Future airline flights</strong></p>
+			{% elif username %}
+			<p><strong>My future flights</strong></p>
+			{% endif %}
+			<table>
+				<th>Airline Name</th>
+				<th>Flight Number</th>
+				<th>Departure Time</th>
+				<th>Arrival Time</th>
+				<th>Status</th>
+				<th>Action</th>
+			
+			{% for flight in myFutureFlights %}
+				<tr>
+					<td>{{flight['name']}}</td>
+					<td>{{flight['num']}}</td>
+					<td>{{flight['depTime']}}</td>
+					<td>{{flight['arrTime']}}</td>
+					<td>{{flight['status']}}</td>
+					<td>
+						{% if admin %}
+							<form action="/changeStatus" method="POST">
+								<input name="num" type="hidden" value="{{flight['num']}}"></input>
+								<input name="departure" type="hidden" value="{{flight['depTime']}}"></input>
+								<select id="status" name="status">
+									<option></option>
+									<option value="Delayed">Delayed</option>
+									<option value="On-Time">On-Time</option>
+									<option value="Canceled">Canceled</option>
+								</select>
+								<input type="submit" value = "Change Status"/>
+							</form>
+						{% elif username %}
 							<form action="/deleteTicket" method="POST">
 								<p class = "center-aligned-button"><button type="submit" name = "ticket_id" value = "{{flight['ticket_id']}}">Cancel</button></p>
 							</form>
-						</td>
-					</tr>
-				{% endfor %}
-				</table>
-			</div>
-			{% endif %}
-		</form>
+						{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+			</table>
+		</div>
+		{% endif %}
 		<div class = "flight-search">
 			{% if not admin %}
 				<h2>Book your flight today!</h2>

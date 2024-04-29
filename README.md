@@ -76,7 +76,7 @@ same applies for international airports.
 > [Note]
 > Defaults will be showing all the future flights operated by the airline he/she works for the next 30 days.
 
-3. `Change Status of flights`: He or she changes a flight status (from on-time to delayed or vice versa) via
+3. ✅ `Change Status of flights`: He or she changes a flight status (from on-time to delayed or vice versa) via
 forms.
 
 4. ✅ `Add airplane in the system`: He or she adds a new airplane, providing all the needed data, via forms.

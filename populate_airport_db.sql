@@ -50,10 +50,10 @@ VALUES ('pookie123', 'pookie@gmail.com'),
 
 -- flight
 INSERT INTO flight (flight_num, departure_date_time, airline_name, airplane_id, base_price, status)
-VALUES (725, '2025-01-15 04:22:17', 'JetBlue', 1234, 5, 'on-time'),
-(980, '2024-04-01 11:30:08', 'JetBlue', 1235, 120, 'delayed'),
-(112, '2020-09-11 12:30:42', 'JetBlue', 1236, 200, 'on-time'),
-(305, '1971-11-24 15:15:18', 'JetBlue', 1234, 15, 'on-time');
+VALUES (725, '2025-01-15 04:22:17', 'JetBlue', 1234, 5, 'On-Time'),
+(980, '2024-04-01 11:30:08', 'JetBlue', 1235, 120, 'Delayed'),
+(112, '2020-09-11 12:30:42', 'JetBlue', 1236, 200, 'On-time'),
+(305, '1971-11-24 15:15:18', 'JetBlue', 1234, 15, 'On-time');
 
 INSERT INTO flight_departure VALUES
 ('PVG', 725, '2025-01-15 04:22:17', 'JetBlue'), 
