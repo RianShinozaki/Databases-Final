@@ -17,7 +17,6 @@
 			<a class = "login" href="/register">REGISTER</a>
 		{% endif %}
 		{% if username %}
-			<a class = "login" href="/trackSpending">TRACK MY SPENDING</a>
 			<a class = "login" href="/logout">LOGOUT</a>
 		{% endif %}
 		</div>
@@ -36,8 +35,14 @@
 			<a class = "login" href="/addAirplane">ADD AIRPLANE</a>
 			<a class = "login" href="/addFlight">ADD FLIGHT</a>
 			<a class = "login" href="/addAirport">ADD AIRPORT</a>
-			<a class = "login" href="maintenance"> MAINTENANCE</a>
+			<a class = "login" href="/maintenance"> MAINTENANCE</a>
+			<a class = "login" href="/earnedRevenue"> VIEW EARNED REVENUE</a>
 
+		</div>
+		{% elif username %}
+		<div class = "search-results">
+			<h2>Customer Dashboard</h1>
+			<a class = "login" href="/trackSpending">TRACK MY SPENDING</a>
 		</div>
 		{% endif %}
 			

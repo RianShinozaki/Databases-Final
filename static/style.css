@@ -48,6 +48,7 @@ a.login {
     color:var(--palette-0);
     vertical-align: center;
     margin-bottom:100px;
+    line-height: 350%;
 }
 
 h1.navigator-header {
@@ -130,4 +131,7 @@ div.input-form-elements {
     color: var(--palette-4);
     
     display: block;
+}
+table, th, td{
+    border: 1px solid black;
 }

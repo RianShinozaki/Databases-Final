@@ -199,7 +199,7 @@ def confirmPurchaseTicket():
 
 	#Insert into ticket_purchase using ticket ID
 	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('email'), datetime.datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], 100.00))
+	cursor.execute(query, (ticketid, session.get('email'), datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], 100.00))
 
 	#Get more flight info using saved flight num
 	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE num = %s;'
@@ -207,8 +207,8 @@ def confirmPurchaseTicket():
 	flightInfo = cursor.fetchone()
 
 	#Insert into ticket
-	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('selected_flight'), flightInfo['depTime'],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
+	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+	cursor.execute(query, (ticketid, session.get('selected_flight'), flightInfo['name'], flightInfo['depTime'],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
 	cursor.close()
 
 	session.pop('selected_flight')
@@ -516,6 +516,17 @@ def newAirport():
 	cursor.close()
 	return redirect('/')
 
+@app.route('/earnedRevenue', methods = ['GET', 'POST'])
+def earnedRevenue():
+	cursor = conn.cursor()
+	query = 'SELECT SUM(sold_price) FROM ticket NATURAL JOIN ticket_purchase WHERE airline_name = %s AND purchase_date_time BETWEEN %s and %s;'
+
+	cursor.execute(query, (session.get('admin'), datetime.now() + timedelta(days=-31), datetime.now())) 
+	monthly = cursor.fetchone()["SUM(sold_price)"]
+
+	cursor.execute(query, (session.get('admin'), datetime.now() + timedelta(days=-365), datetime.now())) 
+	yearly = cursor.fetchone()["SUM(sold_price)"]
+	return render_template('/earnedrevenue.html', monthly = monthly, yearly = yearly)
 
 @app.route('/changeStatus', methods=['GET', 'POST'])
 def changeStatus():
