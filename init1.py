@@ -51,10 +51,10 @@ def homepage_fields():
 			cursor.execute(query, (session.get('admin')))
 			data = cursor.fetchall()
 			cursor.close()
-			return (username, myFutureFlights, myPastFlights, True, data)
+			return (username, myFutureFlights, myPastFlights, session.get('admin'), data)
 		if(myPastFlights):
 			cursor.close()
-	return (username, myFutureFlights, myPastFlights, False)
+	return (username, myFutureFlights, myPastFlights, session.get('admin'), False)
 
 @app.route('/')
 def hello():
@@ -465,7 +465,7 @@ def confirmAddFlight():
 
 	cursor = conn.cursor()
 	flight_num = random.randrange(0, 999)
-	query = 'SELECT * FROM airplane WHERE flight_num = %s, departure_date_time = %s, airline_name = %s'
+	query = 'SELECT * FROM flight WHERE flight_num = %s AND departure_date_time = %s AND airline_name = %s'
 	cursor.execute(query, (flight_num, request.form['departure_date_time'], request.form['arrival_date_time']))
 	exist = cursor.fetchall()
 	while exist:

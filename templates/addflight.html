@@ -13,32 +13,32 @@
     <a href="/">Home</a>
     <div class = "input-form">
         <div class = "input-form-elements">
-            <form action="/confirmAddFlight" method="POST">
+            <form action="/confirmAddFlight" method="POST" >
                 <label for="departureAirport">Departure aiport:</label>
-                <select id="departureAirport" name="departureAirport">
+                <select id="departureAirport" name="departureAirport" required>
                     {% for airport in airports %}
                         <option value="{{airport['code']}}">{{airport['code']}}</option>
                     {% endfor %}
                 </select></br>
 
                 <label for="departure_date_time">Departure Date:</label>
-                <input type="datetime-local" id="departure_date_time" name="departure_date_time"></br>
+                <input type="datetime-local" id="departure_date_time" name="departure_date_time" required></br>
 
                 <label for="arrivalAirport">Arrival aiport:</label>
-                <select id="arrivalAirport" name="arrivalAirport">
+                <select id="arrivalAirport" name="arrivalAirport" required>
                     {% for airport in airports %}
                         <option value="{{airport['code']}}">{{airport['code']}}</option>
                     {% endfor %}
                 </select></br>
                 
                 <label for="arrival_date_time">Arrival Date:</label>
-                <input type="datetime-local" id="arrival_date_time" name="arrival_date_time"></br>
+                <input type="datetime-local" id="arrival_date_time" name="arrival_date_time" required></br>
 
                 <label for="airplane_id">Airplane ID:</label>
-                <input type="number" inputmode="numeric" id="airplane_id" name="airplane_id"></br>
+                <input type="number" inputmode="numeric" id="airplane_id" name="airplane_id" required></br>
 
                 <label for="base_price">Base Price:</label>
-                <input type="number" inputmode="numeric" id="base_price" name="base_price" step="any"></br>
+                <input type="number" inputmode="numeric" id="base_price" name="base_price" step="any" required></br>
 
                 <input type="submit" value = "Add Flight" />
             </form>
