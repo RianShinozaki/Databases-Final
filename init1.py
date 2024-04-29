@@ -43,20 +43,23 @@ def homepage_fields():
 		else:
 			query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime <= CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('email')))
-		cursor.close()
 		myPastFlights = cursor.fetchall()
 
 		error = None			
+		if(session.get('admin')):
+			query = 'SELECT customer_firstname, customer_lastname, COUNT(ticket_id) as flight_amt FROM ticket WHERE airline_name = %s GROUP BY customer_firstname, customer_lastname ORDER BY COUNT(ticket_id) DESC, customer_lastname'
+			cursor.execute(query, (session.get('admin')))
+			data = cursor.fetchall()
+			cursor.close()
+			return (username, myFutureFlights, myPastFlights, True, data)
 		if(myPastFlights):
 			cursor.close()
-		if(session.get('admin')):
-			return (username, myFutureFlights, myPastFlights, True)
 	return (username, myFutureFlights, myPastFlights, False)
 
 @app.route('/')
 def hello():
 	fields = homepage_fields()
-	return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3])
+	return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4])
 
 @app.route('/logout')
 def logout():
@@ -81,10 +84,10 @@ def lookUpFlight():
 	error = None
 	if(data):
 		cursor.close()
-		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], flights = data)
+		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = data)
 	else:
 		error = "No flights match those parameters at this time."
-		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], flights = data)
+		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = data)
 
 @app.route('/login')
 def login():
@@ -415,10 +418,10 @@ def reviews():
 	cursor.close()
 	error = None
 	if(data):
-		return render_template('reviews.html', username = fields[0], admin = fields[2], num=flight_num, date=departure, flights=data)
+		return render_template('reviews.html', username = fields[0], admin = fields[3], num=flight_num, date=departure, flights=data)
 	else:
 		error = "There are no reviews for this flight yet."
-		return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2], error = error)
+		return render_template('index.html', username = fields[0], myflights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], error = error)
 	
 #Page data for the add airplane screen
 @app.route('/addAirplane')
@@ -477,17 +480,14 @@ def confirmAddFlight():
 
 	return redirect('/')
 
-
-
-@app.route('/frequentCustomers', methods=['GET','POST'])
-def frequentCustomers():
-
+@app.route('/frequency', methods=['GET', 'POST'])
+def frequency():
+	# fields = homepage_fields()
 	cursor = conn.cursor()
-	query = 'SELECT customer_firstname, customer_lastname, COUNT(ticket_id) as flight_amt FROM ticket WHERE airline_name = %s GROUP BY customer_firstname, customer_lastname ORDER BY COUNT(ticket_id) DESC'
-	cursor.execute(query, (session.get('admin')))
-
+	query = 'SELECT * FROM ticket WHERE customer_firstname = %s AND customer_lastname = %s AND airline_name = %s'
+	cursor.execute(query, (request.form['first'], request.form['last'], session.get('admin')))
 	data = cursor.fetchall()
-
+	return render_template('/frequentFliers.html', first=request.form['first'], last=request.form['last'], flights = data)
 	
 
 """
