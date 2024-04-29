@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./static/style.css"/>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<title>FlaskFlights</title>
+</head>
+<body>
+    <h2>Input new airport information: </h2>
+    <a href="/">Home</a>
+
+    {% if error %}
+        <p class="error"><strong>Error:</strong> {{error}}</p>
+    {% endif %}
+
+    <form action="/newAirport" method="POST">
+        <input type="text" minlength="3" maxlength="3" name="code" placeholder="Code (e.g. JFK)" required/>
+        <input type="text" name="name" placeholder="Name of Airport" required/>
+        <input type="text" name="city" placeholder="City" required/>
+        <input type="text" name="country" placeholder="Country" required/>
+        <input type="number" name="terminals" placeholder="Number of Terminals" required/>
+        <label for="type">Type of Airport:</label>
+        <select id="type" name="type" required>
+            <option></option>
+            <option value="international">International</option>
+            <option value="domestic">Domestic</option>
+            <option value="both">Both</option>
+        </select>
+        <input type="submit" value = "Add Airport"/>
+    </form>
+                    
+
+</body>

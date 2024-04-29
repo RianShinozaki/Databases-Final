@@ -273,7 +273,6 @@ def employeeLoginAuth():
 	#executes query
 	query = 'SELECT * FROM airline_staff WHERE username = %s and password = %s'
 	password = (hashlib.sha256(password.encode('utf-8'))).hexdigest()
-	print(password)
 	cursor.execute(query, (username, password))
 	#stores the results in a variable
 	data = cursor.fetchone()
@@ -489,6 +488,27 @@ def frequency():
 	data = cursor.fetchall()
 	return render_template('/frequentFliers.html', first=request.form['first'], last=request.form['last'], flights = data)
 	
+
+@app.route('/addAirport', methods = ['GET', 'POST'])
+def addAirport():
+	return render_template('/addAirport.html')
+
+@app.route('/newAirport', methods = ['GET', 'POST'])
+def newAirport():	
+	cursor = conn.cursor()
+	query = 'SELECT * FROM airport WHERE code = %s'
+	cursor.execute(query, (request.form['code'])) 
+	data = cursor.fetchall()
+
+	if data:
+		error = "This airport already exists"
+		return render_template('/addAirport.html', error=error)
+	
+	query = 'INSERT INTO airport VALUES (%s, %s, %s, %s, %s, %s)'
+	cursor.execute(query, (request.form['code'], request.form['name'], request.form['city'], request.form['country'], request.form['terminals'], request.form['type']))
+
+	return redirect('/')
+
 
 """
 #Define route for login

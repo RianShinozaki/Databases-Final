@@ -68,7 +68,7 @@ the next 30 days. He/she will be able to see all the current/future/past flights
 he/she works for based range of dates, source/destination airports/city etc. He/she will be able to see
 all the customers of a particular flight.
 
-2. `Create new flights`: He or she creates a new flight, providing all the needed data, via forms. The
+2. ✅ `Create new flights`: He or she creates a new flight, providing all the needed data, via forms. The
 application should prevent unauthorized users from doing this action. While creating a flight, a check
 should be performed that if an airport is domestic, it should only be able to handle domestic flights, and
 same applies for international airports. 
@@ -83,7 +83,7 @@ forms.
 The application should prevent unauthorized users from doing this action. In the confirmation page,
 she/he will be able to see all the airplanes owned by the airline he/she works for.
 
-5. `Add new airport in the system`: He or she adds a new airport, providing all the needed data, via
+5. ✅ `Add new airport in the system`: He or she adds a new airport, providing all the needed data, via
 forms. The application should prevent unauthorized users from doing this action.
 
 6. ✅ `View flight ratings`: Airline Staff will be able to see each flight’s average ratings and all the comments
