@@ -64,7 +64,7 @@ main {
     padding-top: 110px;
     padding-left: 20px;
 }
-div.flight-search {
+.flight-search {
     
     background-color:var(--palette-2);
     margin-top: 40px;
@@ -98,7 +98,6 @@ div.flight-search-fields-right {
     padding-bottom:50px;
     position: relative;
 }
-
 .search-results {
     
     background-color:var(--palette-2);
@@ -108,5 +107,27 @@ div.flight-search-fields-right {
     max-width: 600px;
     margin:auto;
     color: var(--palette-4);
+}
+div.input-form {
     
+    background-color:var(--palette-2);
+    margin-top: 40px;
+    padding-left: 20px;
+    border-radius: 15px;
+    max-width: 600px;
+    margin:auto;
+    color: var(--palette-4);
+}
+
+div.input-form-elements {
+    
+    background-color:var(--palette-2);
+    margin-top: 40px;
+    padding-left: 20px;
+    border-radius: 15px;
+    max-width: 600px;
+    margin:auto;
+    color: var(--palette-4);
+    
+    display: block;
 }
