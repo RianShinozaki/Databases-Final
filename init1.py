@@ -475,6 +475,12 @@ def confirmAddFlight():
 	#Insert into airplane
 	query = 'INSERT INTO flight VALUES (%s, %s, %s, %s, %s, %s)'
 	cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin'), request.form['airplane_id'], request.form['base_price'], "on-time"))
+
+	query = 'INSERT INTO flight_arrival VALUES (%s, %s, %s, %s, %s)'
+	cursor.execute(query, (request.form['arrivalAirport'], flight_num, request.form['departure_date_time'], request.form['arrival_date_time'], session.get('admin')))
+
+	query = 'INSERT INTO flight_departure VALUES (%s, %s, %s, %s)'
+	cursor.execute(query, (request.form['departureAirport'], flight_num, request.form['departure_date_time'], session.get('admin')))
 	cursor.close()
 
 	return redirect('/')
