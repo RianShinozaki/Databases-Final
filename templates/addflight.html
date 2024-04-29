@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./static/style.css"/>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<title>FlaskFlights</title>
+</head>
+<body>
+    <h2>Input new flight information for {{airline}}</h2>
+    <a href="/">Home</a>
+
+    <form action="/confirmAddFlight" method="POST">
+        <label for="cars">Choose a car:</label>
+        <select id="cars" name="cars">
+            {% for airport in airports %}
+                <option value="{{airport['code']}}">{{airport['code']}}</option>
+            {% endfor %}
+        </select>
+
+        <input type="submit" value = "Add Flight" />
+    </form>
+                    
+
+</body>
