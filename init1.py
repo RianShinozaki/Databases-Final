@@ -418,8 +418,9 @@ def reviews():
 		return render_template('reviews.html', username = fields[0], admin = fields[2], num=flight_num, date=departure, flights=data)
 	else:
 		error = "There are no reviews for this flight yet."
-		return render_template('index.html', username = fields[0], myflights = fields[1], myPastFlights=fields[2], admin = fields[2], error = error)
+		return render_template('index.html', username = fields[0], myflights = fields[1], admin = fields[2], error = error)
 	
+
 	
 """
 #Define route for login
