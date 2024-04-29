@@ -1,5 +1,5 @@
 CREATE VIEW lookUpFlight AS
-SELECT airline_name as name, flight.flight_num as num, 	
+SELECT flight.airline_name as name, flight.flight_num as num, 	
  	   flight.departure_date_time as depTime, 
        arrival_date_time as arrTime,		
  	   CAST(flight.departure_date_time as DATE) as depDate, 

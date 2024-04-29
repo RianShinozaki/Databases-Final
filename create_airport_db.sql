@@ -16,20 +16,25 @@ CREATE TABLE flight_arrival(
 	flight_num 			bigint,
 	departure_date_time 		datetime,
 	arrival_date_time		datetime,
+	airline_name 			varchar(50),
 
 	FOREIGN KEY (code) REFERENCES airport(code),
 	FOREIGN KEY (departure_date_time) REFERENCES flight(departure_date_time),
-	FOREIGN KEY (flight_num) REFERENCES flight(flight_num)
+	FOREIGN KEY (flight_num) REFERENCES flight(flight_num),
+	FOREIGN KEY (airline_name) REFERENCES flight(airline_name)
 );
 
 CREATE TABLE flight_departure(
 	code 				varchar(3),
 	flight_num 			bigint,
 	departure_date_time 		datetime,
+	airline_name 			varchar(50),
 
 	FOREIGN KEY (code) REFERENCES airport(code),
 	FOREIGN KEY (departure_date_time) REFERENCES flight(departure_date_time),
-	FOREIGN KEY (flight_num) REFERENCES flight(flight_num)
+	FOREIGN KEY (flight_num) REFERENCES flight(flight_num),
+	FOREIGN KEY (airline_name) REFERENCES flight(airline_name)
+
 );
 
 CREATE TABLE flight(
@@ -118,7 +123,8 @@ CREATE TABLE ticket(
 
     PRIMARY KEY (ticket_id),
     FOREIGN KEY (flight_num) REFERENCES flight(flight_num),
-    FOREIGN KEY (departure_date_time) REFERENCES flight(departure_date_time)
+    FOREIGN KEY (departure_date_time) REFERENCES flight(departure_date_time),
+    FOREIGN KEY (airline_name) REFERENCES flight(airline_name)
 );
 
 
@@ -174,7 +180,8 @@ CREATE TABLE customer_review(
     comment				varchar(50),
 
     FOREIGN KEY (flight_num) REFERENCES flight(flight_num),
-    FOREIGN KEY (departure_date_time) REFERENCES flight(departure_date_time)
+    FOREIGN KEY (departure_date_time) REFERENCES flight(departure_date_time),
+    FOREIGN KEY (airline_name) REFERENCES flight(airline_name)
 );
 
 

@@ -449,7 +449,12 @@ def confirmAddAirplane():
 #Page data for the ticket purchase screen
 @app.route('/addFlight')
 def addFlight():
-	return render_template('addflight.html', airline = session.get("admin"))
+	cursor = conn.cursor()
+	query = 'SELECT code FROM airport WHERE 1;'
+	cursor.execute(query)
+	airports = cursor.fetchall()
+
+	return render_template('addflight.html', airports = airports, airline = session.get("admin"))
 
 #When you press "purchase" on the ticket screen
 @app.route('/confirmAddFlight', methods = ['GET', 'POST'])
