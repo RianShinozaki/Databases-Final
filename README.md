@@ -35,18 +35,18 @@ page, or you may prefer to just show them when he/she does some of the following
 ### Customer use cases:
 After logging in successfully a user(customer) may do any of the following use cases:
 
-1. `View My flights`: Provide various ways for the user to see flights information which he/she purchased.
+1. ✅ `View My flights`: Provide various ways for the user to see flights information which he/she purchased.
 The default should be showing for the future flights. Optionally you may include a way for the user to
 specify a range of dates, specify destination and/or source airport name or city name etc.
 
-2. `Search for flights`: Search for future flights (one way or round trip) based on source city/airport name,
+2. ✅ `Search for flights`: Search for future flights (one way or round trip) based on source city/airport name,
 destination city/airport name, dates (departure or return).
 
-3. `Purchase tickets`: Customer chooses a flight and purchase ticket for this flight, providing all the
+3. ✅ `Purchase tickets`: Customer chooses a flight and purchase ticket for this flight, providing all the
 needed data, via forms. You may find it easier to implement this along with a use case to search for
 flights.
 
-4. `Cancel Trip`: Customer chooses a purchased ticket for a flight that will take place more than 24 hours
+4. ✅ `Cancel Trip`: Customer chooses a purchased ticket for a flight that will take place more than 24 hours
 in the future and cancel the purchase. After cancellation, the ticket will no longer belong to the
 customer. The ticket will be available again in the system and purchasable by other customers.
 
@@ -112,3 +112,5 @@ last year.
 4. ❎ `Invalid Dates` : make sure that the dates don't contradict each other or the context
 5. ✅ `Maintenance Overlap` : make sure that a plane can't be assigned to a flight during maintenance
 6. ✅ `Schedule Multiple Flights with the same Airplane` : no good
+7. `Enforcing Domestic & International Flights` : wtf
+8. `Flight is Full` : how are we going to show if a flight is full? Remove buy button?
