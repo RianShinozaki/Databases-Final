@@ -139,6 +139,7 @@
 				<th>Flight Number</th>
 				<th>Departure Time</th>
 				<th>Arrival Time</th>
+				<th>Status</th>
 				{% if username %}
 					{% if not admin %}
 						<th>Action</th>
@@ -153,6 +154,7 @@
 					<td>{{flight['num']}}</td>
 					<td>{{flight['depTime']}}</td>
 					<td>{{flight['arrTime']}}</td>
+					<td>{{flight['status']}}</td>
 					{% if username %}
 						{% if not admin %}
 							<td>

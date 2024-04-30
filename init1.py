@@ -66,7 +66,7 @@ def logout():
 	session.pop('email')
 	if(session.get('admin')):
 		session.pop('admin')
-	return redirect('/')
+	return redirect('/login')
 
 @app.route('/lookUpFlight', methods=['GET', 'POST'])
 def lookUpFlight():
@@ -77,7 +77,7 @@ def lookUpFlight():
 	departureDate = request.form['departureDate']
 
 	cursor = conn.cursor()
-	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
+	query = 'SELECT name, num, depTime, arrTime, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
 	cursor.execute(query, (departureAirport, arrivalAirport, departureDate))
 
 	data = cursor.fetchall()
