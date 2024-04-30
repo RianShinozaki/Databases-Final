@@ -27,9 +27,11 @@ def homepage_fields():
 	frequentFliers = None
 	pastFlightPageNum = 1
 	futureFlightPageNum = 1
+
 	if(session.get('email')):
 		cursor = conn.cursor()
 
+		# Get future flights
 		if(session.get('admin')):
 			query = 'SELECT first_name, last_name FROM airline_staff WHERE username = %s'
 			cursor.execute(query, (session.get('email')))
@@ -45,20 +47,25 @@ def homepage_fields():
 			name = cursor.fetchone()
 			username = name['first_name'] + ' ' + name['last_name']
 
-			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
+			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpFlight NATURAL JOIN ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('email')))
+		
 		myFutureFlights = cursor.fetchall()
+		print(myFutureFlights)
 		futureFlightPageNum = len(myFutureFlights)/15
 		sliceBegin = ((int(session.get("futureFlightPage")-1) * 15))
-		sliceEnd = min( int(session.get("futureFlightPage")) * 15, len(myFutureFlights)-1)
+		sliceEnd = min( int(session.get("futureFlightPage")) * 15, len(myFutureFlights))
 		myFutureFlights = myFutureFlights[sliceBegin : sliceEnd]
 
+		print(sliceBegin, ":", sliceEnd)
+		# Get past flights
 		if(session.get('admin')):
 			query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE name = %s AND depTime <= CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('admin')))
 		else:
 			query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime <= CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('email')))
+		
 		myPastFlights = cursor.fetchall()
 		pastFlightPageNum = len(myPastFlights)/20
 		sliceBegin = ((int(session.get("pastFlightPage")-1) * 15))
@@ -231,9 +238,7 @@ def purchaseTicket():
 @app.route('/confirmPurchaseTicket', methods = ['GET', 'POST'])
 def confirmPurchaseTicket():
 	cursor = conn.cursor()
-	# This doesn't guarantee unique tickets, so we should look into that
- 
-	# fix?
+
 	ticketid = random.randrange(0, 99999)
 	query = 'SELECT * FROM ticket WHERE ticket_id = %s'
 	cursor.execute(query, (ticketid))
