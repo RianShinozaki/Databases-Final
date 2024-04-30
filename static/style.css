@@ -9,7 +9,6 @@
     --palette-4: #4C1E4F;
 
     background-color:var(--palette-1);
-
 }
 body {
     margin: 0;
@@ -45,6 +44,7 @@ a.login {
     border-radius: 15px;
     color:var(--palette-0);
     line-height: 300%;
+    white-space: collapse balance;
 }
 
 h1.navigator-header {

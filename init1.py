@@ -103,7 +103,7 @@ def lookUpFlight():
 	departureDate = request.form['departureDate']
 
 	cursor = conn.cursor()
-	query = 'SELECT name, num, depTime, arrTime, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
+	query = 'SELECT name, num, depTime, arrTime, base_price, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
 	cursor.execute(query, (departureAirport, arrivalAirport, departureDate))
 	data = cursor.fetchall()
 
@@ -229,12 +229,29 @@ def selectTicket():
 @app.route('/ticketPurchase')
 def purchaseTicket():
 	cursor = conn.cursor()
-	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE num = %s AND name = %s AND depTime = %s;'
+	query = 'SELECT name, num, depTime, arrTime, base_price FROM lookUpFlight WHERE num = %s AND name = %s AND depTime = %s;'
 	cursor.execute(query, (session.get('selected_flight')[0],session.get('selected_flight')[1],session.get('selected_flight')[2]))
 	flightInfo = cursor.fetchall()
 	error = None
+
+	query = 'SELECT COUNT(ticket_id) FROM ticket WHERE flight_num = %s AND airline_name = %s AND departure_date_Time = %s; '
+	cursor.execute(query, (session.get('selected_flight')[0],session.get('selected_flight')[1],session.get('selected_flight')[2]))
+	ticket_count = cursor.fetchone()
+	query = 'SELECT num_seats FROM airplane, flight WHERE flight_num = %s AND flight.airline_name = %s AND departure_date_Time = %s AND airplane.airplane_id = flight.airplane_id'
+	cursor.execute(query, (session.get('selected_flight')[0],session.get('selected_flight')[1],session.get('selected_flight')[2]))
+	numseats = cursor.fetchone()
+	seatsLeft = numseats['num_seats'] - ticket_count['COUNT(ticket_id)']
+	sellPrice = flightInfo[0]['base_price']
+
 	cursor.close()
-	return render_template('ticketpurchase.html', flightInfo = flightInfo)
+
+	if(seatsLeft <= numseats['num_seats'] * 0.8):
+		sellPrice = float(sellPrice) * 1.25
+
+	sellPrice = round(sellPrice, 2)
+	sellPrice = "%0.2f" % sellPrice
+
+	return render_template('ticketpurchase.html', flightInfo = flightInfo, seatsLeft = seatsLeft, sellPrice = sellPrice)
 
 #When you press "purchase" on the ticket screen
 @app.route('/confirmPurchaseTicket', methods = ['GET', 'POST'])

@@ -25,12 +25,14 @@
                 <th>Flight Number</th>
                 <th>Departure Time</th>
                 <th>Arrival Time</th>
+                <th>Seats Remaining</th>
                 {% for flight in flightInfo %}
                     <tr>
                         <td>{{flight['name']}}</td>
                         <td>{{flight['num']}}</td>
                         <td>{{flight['depTime']}}</td>
                         <td>{{flight['arrTime']}}</td>
+                        <td>{{seatsLeft}}</td>
                     </tr>
                 {% endfor %}
             </table></br>
@@ -38,12 +40,13 @@
             <form action="/confirmPurchaseTicket" method="POST">
                 <input type="text" name = "firstname" placeholder="First Name" required/> </br>
                 <input type="text" name = "lastname" placeholder="Last Name" required/> </br>
-                <p>Customer DOB</p>
+                <label for="birthday">Customer Date of Birth: </label>
                 <input type="date" name = "birthday" required/> </br>
                 <select id="cardtype" name="cardtype">
                     <option value="credit" selected>Credit Card</option>
                     <option value="debit">Debit Card</option>
                 </select>
+                <h3>Your total price will be: ${{sellPrice}}</h3>
                 <input type="text" name = "cardnumber" placeholder="Card Number" required/> </br>
                 <input type="text" name = "cardfirstname" placeholder="Cardholder First Name" required/> </br>
                 <input type="text" name = "cardlastname" placeholder="Cardholder Last Name" required/> </br>
