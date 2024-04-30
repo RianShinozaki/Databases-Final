@@ -89,9 +89,7 @@ def hello():
 
 @app.route('/logout')
 def logout():
-	session.pop('email')
-	if(session.get('admin')):
-		session.pop('admin')
+	session.clear()
 	return redirect('/login')
 
 @app.route('/lookUpFlight', methods=['GET', 'POST'])
@@ -251,6 +249,8 @@ def purchaseTicket():
 	sellPrice = round(sellPrice, 2)
 	sellPrice = "%0.2f" % sellPrice
 
+	session['ticketSellPrice'] = sellPrice
+
 	return render_template('ticketpurchase.html', flightInfo = flightInfo, seatsLeft = seatsLeft, sellPrice = sellPrice)
 
 #When you press "purchase" on the ticket screen
@@ -271,7 +271,7 @@ def confirmPurchaseTicket():
 
 	#Insert into ticket_purchase using ticket ID
 	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('email'), datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], 100.00))
+	cursor.execute(query, (ticketid, session.get('email'), datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], session.get("ticketSellPrice")))
 
 	#Insert into ticket
 	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
