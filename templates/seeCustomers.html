@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./static/style.css"/>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<title>FlaskFlights</title>
+</head>
+<body>
+    <a href="/">Home</a>
+
+    <style type="text/css">
+        table, th, td{
+            border: 1px solid black;
+        }
+    </style>
+
+    <h2>Customers on Flight #{{flight_num}} leaving on {{depDate}}</h2>
+    <table>
+        {% for customer in data %}
+        <tr>
+           <th>{{customer['customer_lastname']}}, {{customer['customer_firstname']}} #{{customer['ticket_id']}}</th>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>

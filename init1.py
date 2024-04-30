@@ -127,7 +127,11 @@ def customerLoginAuth():
 
 @app.route('/register')
 def register():
-	return render_template('register.html')
+	cursor = conn.cursor()
+	query = 'SELECT airline_name FROM airline;'
+	cursor.execute(query)
+	airlines = cursor.fetchall()
+	return render_template('register.html', airlines=airlines)
 
 #Authenticates the register
 @app.route('/customerRegisterAuth', methods=['GET', 'POST'])
@@ -640,6 +644,27 @@ def changeStatus():
 
 	fields = homepage_fields()
 	return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4])
+
+@app.route('/seeCustomers', methods=['GET', 'POST'])
+def seeCustomers():
+	flight_num = request.form['flight_num']
+	departure_date = request.form['depTime']
+	airline = session.get('admin')
+
+	cursor = conn.cursor()
+	query = 'SELECT * FROM ticket WHERE airline_name = %s AND flight_num = %s AND departure_date_time = %s ORDER BY ticket_id'
+	cursor.execute(query, (airline, flight_num, departure_date))
+	data = cursor.fetchall()
+	cursor.close()
+
+	if not data:
+		error = "There are no customers in this flight."
+		fields = homepage_fields()
+		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], error=error)
+	
+	return render_template('/seeCustomers.html', flight_num=flight_num, depDate=departure_date, data=data)
+
+
 """
 #Define route for login
 @app.route('/login')

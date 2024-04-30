@@ -45,31 +45,36 @@
                                     <input type="text" name = "passportCountry" placeholder = "Passport Country" required/></br>
                                     <input type="date" name = "dob" placeholder = "Date of Birth" required/>Date of Birth</br>
 
-                                    <input type="submit" value = Register />
-                                    {% if error %}
-                                        <p class="error"><strong>Error:</strong> {{error}}</p>
-                                    {% endif %}
-                                </form>
-                            </td>
-                            <td>
-                                <form action="/employeeRegisterAuth" method="POST">
-                                    <input type="text" name = "airline" placeholder = "Airline" required/></br>
-                                    <input type="text" name = "first_name" placeholder = "First Name" required/></br>
-                                    <input type="text" name = "last_name" placeholder = "Last Name" required/></br>
-                                    <input type="date" name = "dob" placeholder = "Date of Birth" required/>Date of Birth</br>
-                                    <input type="text" name = "username" placeholder="username" required/> </br>
-                                    <input type="password" name = "password" placeholder="password" required/></br>
-                                    <input type="password" name = "confirmpassword" placeholder="confirm password" required/></br>
-                                    <input type="submit" value = Login />
-                                    {% if error %}
-                                        <p class="error"><strong>Error:</strong> {{error}}</p>
-                                    {% endif %}
-                                </form>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </figure>
-        </div>
-    </main>
+                            <input type="submit" value = Register />
+                            {% if error %}
+                                <p class="error"><strong>Error:</strong> {{error}}</p>
+                            {% endif %}
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/employeeRegisterAuth" method="POST">
+                            <label for="airline">Airline </label>
+                            <select id="airline" name="airline" required>
+                                <option></option>
+                                {% for airline in airlines %}
+                                    <option value="{{airline['airline_name']}}">{{airline['airline_name']}}</option>
+                                {% endfor %}
+                            </select></br>
+
+                            <input type="text" name = "first_name" placeholder = "First Name" required/></br>
+                            <input type="text" name = "last_name" placeholder = "Last Name" required/></br>
+                            <input type="date" name = "dob" placeholder = "Date of Birth" required/>Date of Birth</br>
+                            <input type="text" name = "username" placeholder="username" required/> </br>
+                            <input type="password" name = "password" placeholder="password" required/></br>
+                            <input type="password" name = "confirmpassword" placeholder="confirm password" required/></br>
+                            <input type="submit" value = Login />
+                            {% if error %}
+                                <p class="error"><strong>Error:</strong> {{error}}</p>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </figure>
 </body>
