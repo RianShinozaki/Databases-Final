@@ -102,6 +102,6 @@ VALUES (87642, 725, 'JetBlue', 'bob@gmail.com', '2025-01-15 04:22:17', 'Bob', 'D
 INSERT INTO ticket_purchase (ticket_id, customer_email, purchase_date_time, card_type, card_number, card_firstname, card_lastname, card_expiration_date, sold_price)
 VALUES (87642, 'bob@gmail.com', '2024-03-28 21:15:03', 'debit', 546781,'Bob', 'Duncan', '2028-12-11', 128.57),
 (12345, 'bob@gmail.com', '2024-03-28 21:19:53', 'credit', 439047, 'Amy', 'Duncan', '2035-08-30', 478.77),
-(12345, 'amelia@gmail.com', '2023-07-19 16:29:13', 'credit', 208984,'Mary', 'Earhart', '2025-03-15', 8.53),
+(12346, 'amelia@gmail.com', '2023-07-19 16:29:13', 'credit', 208984,'Mary', 'Earhart', '2025-03-15', 8.53),
 (10987, 'george@hotmail.com', '2018-04-06 11:29:00', 'debit', 546781, 'Bob', 'Duncan', '2028-12-11', 302.83),
 (89302, 'db@outlook.com', '1971-11-03 02:00:43', 'credit', 123873, 'D.B.', 'Cooper', '2024-10-19', 50.14);

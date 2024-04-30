@@ -165,6 +165,7 @@ def register():
 	query = 'SELECT airline_name FROM airline;'
 	cursor.execute(query)
 	airlines = cursor.fetchall()
+	cursor.close()
 	return render_template('register.html', airlines=airlines)
 
 #Authenticates the register
@@ -175,12 +176,17 @@ def customerRegisterAuth():
 	passwordconfirm = request.form['confirmpassword']
 	error = None
 
+	cursor = conn.cursor()
+
 	#check password confirmation
 	if(password != passwordconfirm):
 		error = 'Passwords do not match!'
+		query = 'SELECT airline_name FROM airline;'
+		cursor.execute(query)
+		airlines = cursor.fetchall()
+		cursor.close()
 		return render_template('register.html', error=error)
 	
-	cursor = conn.cursor()
 	
 	#check if the user already exists.
 	query = 'SELECT * FROM customer WHERE customer_email = %s'
@@ -197,8 +203,11 @@ def customerRegisterAuth():
 		return redirect('/')
 	else:
 		error = 'Email already in use.'
+		query = 'SELECT airline_name FROM airline;'
+		cursor.execute(query)
+		airlines = cursor.fetchall()
 		cursor.close()
-		return render_template('register.html', error=error)
+		return render_template('register.html', error=error, airlines=airlines)
 
 #Takes you to the ticket purchase screen and saves flight_num in question
 @app.route('/selectTicket', methods=['GET', 'POST'])
@@ -446,12 +455,16 @@ def employeeRegisterAuth():
 	passwordconfirm = request.form['confirmpassword']
 	error = None
 
+	cursor = conn.cursor()
+
 	#check password confirmation
 	if(password != passwordconfirm):
 		error = 'Passwords do not match!'
-		return render_template('register.html', error=error)
+		query = 'SELECT airline_name FROM airline;'
+		cursor.execute(query)
+		airlines = cursor.fetchall()
+		return render_template('register.html', error=error, airlines=airlines)
 	
-	cursor = conn.cursor()
 
 	query = 'SELECT * FROM airline WHERE airline_name = %s'
 	cursor.execute(query, (airline_name))
@@ -465,7 +478,7 @@ def employeeRegisterAuth():
 	#this is not all the data needed for a cusomter yet!
 	if(not data and airline):
 		session['email'] = username
-		session['admin'] = airline
+		session['admin'] = airline_name
 		session['futureFlightPage'] = 1
 		session['pastFlightPage'] = 1
 
@@ -478,9 +491,13 @@ def employeeRegisterAuth():
 		if(not airline):
 			error = 'Airline is not registered in the system'
 		else: 
-			error = 'Email already in use.'
+			error = "Username's already in use."
+		query = 'SELECT airline_name FROM airline;'
+		cursor.execute(query)
+		airlines = cursor.fetchall()
 		cursor.close()
-		return render_template('register.html', error=error)
+		
+		return render_template('register.html', error=error, airlines=airlines)
 
 
 @app.route('/maintenance')
