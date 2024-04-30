@@ -1,5 +1,5 @@
 CREATE VIEW lookUpFlight AS
-SELECT flight.airline_name as name, flight.flight_num as num, 	
+SELECT DISTINCT flight.airline_name as name, flight.flight_num as num, 	
  	   flight.departure_date_time as depTime, 
        arrival_date_time as arrTime,
        flight.status as status,		

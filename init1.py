@@ -23,7 +23,7 @@ def homepage_fields():
 	username = session.get('email')
 	myFutureFlights = []
 	myPastFlights = []
-
+	frequentFliers = None
 	if(session.get('email')):
 		cursor = conn.cursor()
 		if(session.get('admin')):
@@ -49,12 +49,9 @@ def homepage_fields():
 		if(session.get('admin')):
 			query = 'SELECT customer_firstname, customer_lastname, COUNT(ticket_id) as flight_amt FROM ticket WHERE airline_name = %s GROUP BY customer_firstname, customer_lastname ORDER BY COUNT(ticket_id) DESC, customer_lastname'
 			cursor.execute(query, (session.get('admin')))
-			data = cursor.fetchall()
-			cursor.close()
-			return (username, myFutureFlights, myPastFlights, session.get('admin'), data)
-		if(myPastFlights):
-			cursor.close()
-	return (username, myFutureFlights, myPastFlights, session.get('admin'), False)
+			frequentFliers = cursor.fetchall()
+	cursor.close()
+	return (username, myFutureFlights, myPastFlights, session.get('admin'), frequentFliers)
 
 @app.route('/')
 def hello():
@@ -574,11 +571,11 @@ def confirmAddFlight():
 	cursor = conn.cursor()
 	flight_num = random.randrange(0, 999)
 	query = 'SELECT * FROM flight WHERE flight_num = %s AND departure_date_time = %s AND airline_name = %s'
-	cursor.execute(query, (flight_num, request.form['departure_date_time'], request.form['arrival_date_time']))
+	cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin')))
 	exist = cursor.fetchall()
 	while exist:
 		flight_num = random.randrange(0, 999)
-		cursor.execute(query, (flight_num, request.form['departure_date_time'], request.form['arrival_date_time']))
+		cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin')))
 		exist = cursor.fetchall()
 
 	#Insert into airplane
@@ -644,8 +641,7 @@ def changeStatus():
 	cursor.execute(query, (request.form['status'], request.form['num'], request.form['departure'], session.get('admin')))
 	cursor.close()
 
-	fields = homepage_fields()
-	return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4])
+	return redirect('/')
 
 @app.route('/seeCustomers', methods=['GET', 'POST'])
 def seeCustomers():
@@ -666,6 +662,51 @@ def seeCustomers():
 	
 	return render_template('/seeCustomers.html', flight_num=flight_num, depDate=departure_date, data=data)
 
+@app.route('/autoPopulate', methods=['GET', 'POST'])
+def autoPopulate():
+	cursor = conn.cursor()
+	query = 'SELECT code FROM airport WHERE 1;'
+	cursor.execute(query)
+	airports = cursor.fetchall()
+	query = 'SELECT airline_name FROM airline WHERE 1;'
+	cursor.execute(query)
+	airlines = cursor.fetchall()
+
+	for airline in airlines:
+		for i in range(15):
+			for airportDepart in airports:
+				for airportArrive in airports:
+					if(airportArrive == airportDepart):
+						continue
+
+					query = 'SELECT airplane_id FROM airplane WHERE airline_name = %s'
+					cursor.execute(query, (airline['airline_name']))
+					airplane_model = cursor.fetchone()
+					
+					departureDay = datetime.today().strftime('%Y-%m-%d')
+					departureTime = datetime.strptime(departureDay, '%Y-%m-%d') + timedelta(minutes = random.randrange(0, 1440)) + timedelta(days=i)
+					arrivalTime = departureTime + timedelta(hours = 6)
+					
+					flight_num = random.randrange(0, 999)
+					query = 'SELECT * FROM flight WHERE flight_num = %s AND departure_date_time = %s AND airline_name = %s'
+					cursor.execute(query, (flight_num, departureTime, airline['airline_name']))
+					exist = cursor.fetchall()
+					while exist:
+						flight_num = random.randrange(0, 999)
+						cursor.execute(query, (flight_num, departureTime, airline['airline_name']))
+						exist = cursor.fetchall()
+
+					query = 'INSERT INTO flight VALUES (%s, %s, %s, %s, %s, %s)'
+					cursor.execute(query, (flight_num, departureTime, airline['airline_name'], airplane_model['airplane_id'], random.randint(200, 400), "on-time"))
+
+					query = 'INSERT INTO flight_arrival VALUES (%s, %s, %s, %s, %s)'
+					cursor.execute(query, (airportArrive['code'], flight_num, departureTime, arrivalTime, airline['airline_name']))
+
+					query = 'INSERT INTO flight_departure VALUES (%s, %s, %s, %s)'
+					cursor.execute(query, (airportDepart['code'], flight_num, departureTime, airline['airline_name']))
+	
+	cursor.close()
+	return redirect('/')
 
 """
 #Define route for login
