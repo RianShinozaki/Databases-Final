@@ -37,6 +37,7 @@
 			<a class = "login" href="/addAirport">ADD AIRPORT</a>
 			<a class = "login" href="/maintenance"> MAINTENANCE</a>
 			<a class = "login" href="/earnedRevenue"> VIEW EARNED REVENUE</a>
+			<a class = "login" href="/autoPopulate"> POPULATE TEST FLIGHTS</a>
 
 		</div>
 		{% elif username %}
@@ -48,7 +49,19 @@
 			
 		<div class = "search-results">
 			{% if admin %}
-			<p><strong>Future airline flights</strong></p>
+			<p><strong>Future airline flights </strong></p>
+			<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
+				<p><strong>Page </strong></p>
+				<input type = "numeric" value = 1>
+				<p><strong> of </strong></p>
+				<input type = "numeric" value = 1 readonly = true>
+				<input type = "submit" value = refresh >
+			</span>
+			
+			
+			
+			</br></br></br>
+		
 			{% elif username %}
 			<p><strong>My future flights</strong></p>
 			{% endif %}
