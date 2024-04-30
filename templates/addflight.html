@@ -24,6 +24,9 @@
                 {% for days in maintenance %}
                     <p class="error"><strong>{{days['start_date']}} to {{days['end_date']}}</strong></p>
                 {% endfor %}
+                {% for sched in flight %}
+                    <p class="error"><strong>Flight #{{sched['flight_num']}} : {{sched['departure_date_time']}} to {{sched['arrival_date_time']}}</strong></p>
+                {% endfor %}
 		    {% endif %}
 
             <div class = "input-form-elements">

@@ -38,7 +38,7 @@ def homepage_fields():
 			name = cursor.fetchone()
 			username = name['first_name'] + ' ' + name['last_name']
 
-			query = 'SELECT name, num, depTime, arrTime, status FROM lookUpFlight WHERE name = %s AND depTime > CURRENT_TIMESTAMP();'
+			query = 'SELECT name, num, depTime, arrTime, status FROM lookUpFlight WHERE name = %s AND depTime > CURRENT_TIMESTAMP() ORDER BY depTime;'
 			cursor.execute(query, (session.get('admin')))
 			
 		else:
@@ -47,7 +47,7 @@ def homepage_fields():
 			name = cursor.fetchone()
 			username = name['first_name'] + ' ' + name['last_name']
 
-			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpTicket WHERE customer_email = %s AND depTime > CURRENT_TIMESTAMP();'
+			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpTicket WHERE customer_email = %s AND depTime > CURRENT_TIMESTAMP() ORDER BY depTime;'
 			cursor.execute(query, (session.get('email')))
 		
 		myFutureFlights = cursor.fetchall()
@@ -57,17 +57,17 @@ def homepage_fields():
 		sliceEnd = min( int(session.get("futureFlightPage")) * 15, len(myFutureFlights))
 		myFutureFlights = myFutureFlights[sliceBegin : sliceEnd]
 
-		print(sliceBegin, ":", sliceEnd)
+		# print(sliceBegin, ":", sliceEnd)
 		# Get past flights
 		if(session.get('admin')):
-			query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE name = %s AND depTime <= CURRENT_TIMESTAMP();'
+			query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE name = %s AND depTime <= CURRENT_TIMESTAMP() ORDER BY depTime DESC;'
 			cursor.execute(query, (session.get('admin')))
 		else:
-			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpTicket WHERE customer_email = %s AND depTime < CURRENT_TIMESTAMP();'
+			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpTicket WHERE customer_email = %s AND depTime < CURRENT_TIMESTAMP() ORDER BY depTime DESC;'
 			cursor.execute(query, (session.get('email')))
 		
 		myPastFlights = cursor.fetchall()
-		print(myPastFlights)
+		# print(myPastFlights)
 
 		pastFlightPageNum = len(myPastFlights)/20
 		sliceBegin = ((int(session.get("pastFlightPage")-1) * 15))
@@ -325,7 +325,7 @@ def trackSpendingLogic(currentDateTime, beginRangeDateTime):
 	query = 'SELECT purchase_date_time, sold_price FROM ticket_purchase WHERE customer_email = %s AND purchase_date_time between %s and %s;'
 	cursor.execute(query, (session.get('email'), beginRangeDateTime, currentDateTime))
 	ticketInfo = cursor.fetchall()
-	print(ticketInfo)
+	# print(ticketInfo)
 
 	monthlySpendingDict = {}
 
@@ -640,6 +640,8 @@ def confirmAddFlight():
 		cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin')))
 		exist = cursor.fetchall()
 	
+
+	# overlap with maintenance
 	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN start_date and end_date'
 	cursor.execute(query, (request.form['airplane_id'], session.get('admin'), request.form['departure_date_time']))
 	exist_start = cursor.fetchall()
@@ -661,6 +663,33 @@ def confirmAddFlight():
 		cursor.execute(query)
 		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, maintenance=exist_end)
+
+	# overlap with another flight
+	query = 'SELECT * FROM flight_arrival NATURAL JOIN flight WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN flight_arrival.departure_date_time and flight_arrival.arrival_date_time'
+	cursor.execute(query, (request.form['airplane_id'], session.get('admin'), request.form['arrival_date_time']))
+	exist_start = cursor.fetchall()
+
+	print(exist_start)
+
+	if exist_start:
+		print(exist_start)
+		error = "Plane#" + str(request.form['airplane_id']) + " is scheduled for the following flights during that time:"
+		query = 'SELECT code FROM airport WHERE 1;'
+		cursor.execute(query)
+		airports = cursor.fetchall()
+		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, flight=exist_start)
+	
+	query = 'SELECT * FROM flight_arrival NATURAL JOIN flight WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN flight_arrival.departure_date_time and flight_arrival.arrival_date_time'
+	cursor.execute(query, (request.form['airplane_id'], session.get('admin'), request.form['departure_date_time']))
+	exist_start = cursor.fetchall()
+
+	if exist_end:
+		error = "Plane#" + str(request.form['airplane_id']) + " is scheduled for the following flights during that time:"
+		query = 'SELECT code FROM airport WHERE 1;'
+		cursor.execute(query)
+		airports = cursor.fetchall()
+		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, flight=exist_end)
+
 
 	#Insert into airplane
 	query = 'INSERT INTO flight VALUES (%s, %s, %s, %s, %s, %s)'

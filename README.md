@@ -110,5 +110,5 @@ last year.
 2. `Return Flight Parameters`: account for a return flight when searching for a flight
 3. `Ticket Prices` : calculate new prices based on tickets already sold
 4. ❎ `Invalid Dates` : make sure that the dates don't contradict each other or the context
-5. `Maintenance Overlap` : make sure that a plane can't be assigned to a flight during maintenance
-6. `Schedule Multiple Flights with the same Airplane` : no good
+5. ✅ `Maintenance Overlap` : make sure that a plane can't be assigned to a flight during maintenance
+6. ✅ `Schedule Multiple Flights with the same Airplane` : no good
