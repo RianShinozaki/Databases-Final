@@ -61,7 +61,7 @@ VALUES ('JetBlue', 0, 0, null),
 -- airline staff
 INSERT INTO airline_staff (username, airline_name, password, first_name, last_name, DOB) VALUES 
 ('pookie123', 'JetBlue', '3c1de7c0ce41d67d0cdbc4f416d0a77ecf539560c47292a7070cbea8e52e6666', 'Bill', 'Clinton', '1946-08-19'),
-('admin', 'JetBlue', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'admin', NULL, NULL);
+('admin', 'JetBlue', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'admin', '', NULL);
 
 
 INSERT INTO staff_phone (username, phone_num)

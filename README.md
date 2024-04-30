@@ -3,14 +3,14 @@
 
 ### Home page when not logged-in:
 When the user is not logged-in, the following cases should be available in the home page:
-1. `View Public Info`: All users, whether logged in or not, can:
+1. ✅ `View Public Info`: All users, whether logged in or not, can:
     - Search for future flights based on source city/airport name, destination city/airport name,
 departure date for one way (departure and return dates for round trip).
     - Will be able to see the flights status based on airline name, flight number, arrival/departure
 date.
-2.  `Register`: 2 types of user registrations (Customer, and Airline Staff) option via forms as mentioned in
+2. ✅ `Register`: 2 types of user registrations (Customer, and Airline Staff) option via forms as mentioned in
 the part 1 of the project.
-3. `Login`: 2 types of user login (Customer, and Airline Staff). Users enters their username (email address
+3. ✅ `Login`: 2 types of user login (Customer, and Airline Staff). Users enters their username (email address
 will be used as username for customer) - x, and password - y, via forms on login page. This data is sent
 as POST parameters to the login-authentication component, which checks whether there is a tuple in
 the corresponding user’s table with username=x and the password = md5(y) :
@@ -30,6 +30,7 @@ you may include those interfaces directly on the home page.
 > Any other information you’d like to include:
 For example, you might want to show customer's future flights information on the customer's home
 page, or you may prefer to just show them when he/she does some of the following use cases.
+
 
 ### Customer use cases:
 After logging in successfully a user(customer) may do any of the following use cases:
@@ -59,6 +60,7 @@ a range of dates to view total amount of money spent within that range and a bar
 month wise money spent within that range.
 
 7. `Logout`: The session is destroyed and a “goodbye” page or the login page is displayed.
+
 
 ### Airline Staff use cases:
 After logging in successfully an airline staff may do any of the following use cases:

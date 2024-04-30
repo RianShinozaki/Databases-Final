@@ -21,17 +21,30 @@ conn = pymysql.connect(host='localhost',
 #Define a route to hello function
 
 def homepage_fields():
-	username = session.get('email')
+	username = None
 	myFutureFlights = []
 	myPastFlights = []
 	frequentFliers = None
+	pastFlightPageNum = 1
+	futureFlightPageNum = 1
 	if(session.get('email')):
 		cursor = conn.cursor()
+
 		if(session.get('admin')):
+			query = 'SELECT first_name, last_name FROM airline_staff WHERE username = %s'
+			cursor.execute(query, (session.get('email')))
+			name = cursor.fetchone()
+			username = name['first_name'] + ' ' + name['last_name']
+
 			query = 'SELECT name, num, depTime, arrTime, status FROM lookUpFlight WHERE name = %s AND depTime > CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('admin')))
 			
 		else:
+			query = 'SELECT first_name, last_name FROM customer WHERE customer_email = %s'
+			cursor.execute(query, (session.get('email')))
+			name = cursor.fetchone()
+			username = name['first_name'] + ' ' + name['last_name']
+
 			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('email')))
 		myFutureFlights = cursor.fetchall()
@@ -57,7 +70,7 @@ def homepage_fields():
 			query = 'SELECT customer_firstname, customer_lastname, COUNT(ticket_id) as flight_amt FROM ticket WHERE airline_name = %s GROUP BY customer_firstname, customer_lastname ORDER BY COUNT(ticket_id) DESC, customer_lastname'
 			cursor.execute(query, (session.get('admin')))
 			frequentFliers = cursor.fetchall()
-	cursor.close()
+		cursor.close()
 	return (username, myFutureFlights, myPastFlights, session.get('admin'), frequentFliers, math.ceil(futureFlightPageNum), session.get("futureFlightPage"), math.ceil(pastFlightPageNum),session.get("pastFlightPage"))
 
 @app.route('/')
@@ -83,15 +96,15 @@ def lookUpFlight():
 	cursor = conn.cursor()
 	query = 'SELECT name, num, depTime, arrTime, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
 	cursor.execute(query, (departureAirport, arrivalAirport, departureDate))
-
 	data = cursor.fetchall()
+
 	error = None
 	if(data):
 		cursor.close()
 		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = data)
 	else:
 		error = "No flights match those parameters at this time."
-		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = data)
+		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = data, error=error)
 
 @app.route('/changeFutureFlightPage', methods=['GET', 'POST'])
 def changeFutureFlightPage():
