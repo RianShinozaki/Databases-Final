@@ -38,11 +38,13 @@
 
             {% if noID %}
                 <p class="error"><strong>Error:</strong> {{noID}}</p>
-                {% for ids in maintenance %}
-                    <tr>
-                        <td> {{ids['airplane_id']}} </td>
-                    </tr>
-                {% endfor %}
+                <table>
+                    {% for ids in maintenance %}
+                        <tr>
+                            <td> {{ids['airplane_id']}} </td>
+                        </tr>
+                    {% endfor %}
+                </table>
             {% endif %}
 
             {% if success %}

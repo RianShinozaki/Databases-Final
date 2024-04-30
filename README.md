@@ -101,3 +101,9 @@ taken only on that particular airline.
 last year.
 
 10. ✅ `Logout`: The session is destroyed and a “goodbye” page or the login page is displayed
+
+
+### Other Things to Fix:
+1. `Airplane Ages`: make sure that airplane ages are calculated based on today's date
+2. `Return Flight Parameters`: account for a return flight when searching for a flight
+3. `Ticket Prices` : calculate new prices based on tickets already sold
