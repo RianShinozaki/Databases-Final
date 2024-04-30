@@ -85,7 +85,7 @@ forms.
 The application should prevent unauthorized users from doing this action. In the confirmation page,
 she/he will be able to see all the airplanes owned by the airline he/she works for.
 
-5. `Add new airport in the system`: He or she adds a new airport, providing all the needed data, via
+5. ✅ `Add new airport in the system`: He or she adds a new airport, providing all the needed data, via
 forms. The application should prevent unauthorized users from doing this action.
 
 6. `View flight ratings`: Airline Staff will be able to see each flight’s average ratings and all the comments
@@ -95,7 +95,7 @@ and ratings of that flight given by the customers.
 and time and end date and time) for a particular airplane (identified by airline name and airplane id).
 Airplanes under maintenance cannot be assigned to a flight during the maintenance period.
 
-8. `View frequent customers`: Airline Staff will also be able to see the most frequent customer within
+8. ✅ `View frequent customers`: Airline Staff will also be able to see the most frequent customer within
 the last year. In addition, Airline Staff will be able to see a list of all flights a particular Customer has
 taken only on that particular airline.
 
@@ -109,4 +109,6 @@ last year.
 1. ✅ `Airplane Ages`: make sure that airplane ages are calculated based on today's date
 2. `Return Flight Parameters`: account for a return flight when searching for a flight
 3. `Ticket Prices` : calculate new prices based on tickets already sold
-4. `Invalid Dates` : make sure that the dates don't contradict each other or the context
+4. ❎ `Invalid Dates` : make sure that the dates don't contradict each other or the context
+5. `Maintenance Overlap` : make sure that a plane can't be assigned to a flight during maintenance
+6. `Schedule Multiple Flights with the same Airplane` : no good

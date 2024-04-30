@@ -18,10 +18,19 @@
     <main>
         <div class = "input-form">
             <h2>Input new flight information for {{airline}}</h2>
+
+            {% if error %}
+			    <p class="error"><strong>Error:</strong> {{error}}</p>
+                {% for days in maintenance %}
+                    <p class="error"><strong>{{days['start_date']}} to {{days['end_date']}}</strong></p>
+                {% endfor %}
+		    {% endif %}
+
             <div class = "input-form-elements">
                 <form action="/confirmAddFlight" method="POST" >
                     <label for="departureAirport">Departure aiport:</label>
                     <select id="departureAirport" name="departureAirport" required>
+                        <option></option>
                         {% for airport in airports %}
                             <option value="{{airport['code']}}">{{airport['code']}}</option>
                         {% endfor %}
@@ -32,6 +41,7 @@
 
                     <label for="arrivalAirport">Arrival aiport:</label>
                     <select id="arrivalAirport" name="arrivalAirport" required>
+                        <option></option>
                         {% for airport in airports %}
                             <option value="{{airport['code']}}">{{airport['code']}}</option>
                         {% endfor %}
