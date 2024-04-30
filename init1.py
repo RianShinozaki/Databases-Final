@@ -80,7 +80,7 @@ def homepage_fields():
 			cursor.execute(query, (session.get('admin')))
 			frequentFliers = cursor.fetchall()
 		cursor.close()
-	return (username, myFutureFlights, myPastFlights, session.get('admin'), frequentFliers, math.ceil(futureFlightPageNum), session.get("futureFlightPage"), math.ceil(pastFlightPageNum),session.get("pastFlightPage"))
+	return (username, myFutureFlights, myPastFlights, session.get('admin'), frequentFliers, max(1, math.ceil(futureFlightPageNum)), session.get("futureFlightPage"), max(1,math.ceil(pastFlightPageNum)),session.get("pastFlightPage"))
 
 @app.route('/')
 def hello():
