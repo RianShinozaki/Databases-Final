@@ -18,7 +18,11 @@ conn = pymysql.connect(host='localhost',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
 
-#Define a route to hello function
+# ===============================================================================================================
+
+
+
+### HOMEPAGE FUNCTIONALITY ###
 
 def homepage_fields():
 	username = None
@@ -82,15 +86,31 @@ def homepage_fields():
 		cursor.close()
 	return (username, myFutureFlights, myPastFlights, session.get('admin'), frequentFliers, max(1, math.ceil(futureFlightPageNum)), session.get("futureFlightPage"), max(1,math.ceil(pastFlightPageNum)),session.get("pastFlightPage"))
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 @app.route('/')
 def hello():
 	fields = homepage_fields()
 	return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], futureFlightPageNum = fields[5], futureFlightPage = fields[6], pastFlightPageNum = fields[7], pastFlightPage = fields[8])
 
+# ===============================================================================================================
+
+
+
+### EVRYONE USE CASES ###
+
+@app.route('/login')
+def login():
+	return render_template('login.html')
+
 @app.route('/logout')
 def logout():
 	session.clear()
 	return redirect('/login')
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 @app.route('/lookUpFlight', methods=['GET', 'POST'])
 def lookUpFlight():
@@ -118,12 +138,16 @@ def lookUpFlight():
 		error = "No flights match those parameters at this time."
 		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = data, error=error)
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 @app.route('/changeFutureFlightPage', methods=['GET', 'POST'])
 def changeFutureFlightPage():
 	flightPage = int(request.form['futureFlightPage'])
 	flightPages = int(request.form['futureFlightPages'])
 	session['futureFlightPage'] = max(1, min(flightPage, flightPages))
 	return redirect('/')
+
 
 @app.route('/changePastFlightPage', methods=['GET', 'POST'])
 def changePastFlightPage():
@@ -132,10 +156,10 @@ def changePastFlightPage():
 	session['pastFlightPage'] = max(1, min(flightPage, flightPages))
 	return redirect('/')
 
+# ===============================================================================================================
 
-@app.route('/login')
-def login():
-	return render_template('login.html')
+
+
 
 ### CUSTOMER USE CASES ###
 
@@ -171,6 +195,9 @@ def customerLoginAuth():
 		error = 'Invalid login or email'
 		return render_template('login.html', error=error)
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 @app.route('/register')
 def register():
 	cursor = conn.cursor()
@@ -179,6 +206,7 @@ def register():
 	airlines = cursor.fetchall()
 	cursor.close()
 	return render_template('register.html', airlines=airlines)
+
 
 #Authenticates the register
 @app.route('/customerRegisterAuth', methods=['GET', 'POST'])
@@ -221,12 +249,18 @@ def customerRegisterAuth():
 		cursor.close()
 		return render_template('register.html', error=error, airlines=airlines)
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 #Takes you to the ticket purchase screen and saves flight_num in question
 @app.route('/selectTicket', methods=['GET', 'POST'])
 def selectTicket():
 	flightInfo = request.form['flight_num'].split("_")
 	session['selected_flight'] = flightInfo
 	return redirect('ticketPurchase')
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 #Page data for the ticket purchase screen
 @app.route('/ticketPurchase')
@@ -286,6 +320,9 @@ def confirmPurchaseTicket():
 	session.pop('selected_flight')
 	return redirect('/')
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 @app.route('/deleteTicket', methods=['GET', 'POST'])
 def deleteTicket():
 	#Doesn't check if ticket is more than 24 hours in the future.
@@ -296,7 +333,8 @@ def deleteTicket():
 
 	return redirect('/')
 
-
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 #Takes you to the ticket review screen and saves flight_num in question
 @app.route('/reviewTicket', methods=['GET', 'POST'])
@@ -304,6 +342,7 @@ def reviewTicket():
 	flight_num = request.form['ticket_id']
 	session['selected_flight'] = flight_num
 	return redirect('ticketReview')
+
 
 #Page data for the ticket review screen
 @app.route('/ticketReview')
@@ -334,6 +373,8 @@ def confirmReviewTicket():
 	session.pop('selected_flight')
 	return redirect('/')
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 def trackSpendingLogic(currentDateTime, beginRangeDateTime):
 	
@@ -400,10 +441,14 @@ def trackSpendingRefresh():
 
 	return trackSpendingLogic(endDateTime, beginDateTime)
 
+
 @app.route('/trackSpending', methods=['GET', 'POST'])
 def trackSpending():
 	nowMonthYear = str(datetime.now().year) + "-" + str(datetime.now().month)
 	return trackSpendingLogic(getLastDayOfMonth(nowMonthYear), getSixMonthsAgo(nowMonthYear))
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 def getLastDayOfMonth(monthYear):
 	dateTime = datetime.strptime(monthYear, "%Y-%m")
@@ -419,6 +464,9 @@ def getLastDayOfMonth(monthYear):
 	newDateTime += timedelta(days=-1)
 
 	return(newDateTime)
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 def getSixMonthsAgo(monthYear):
 	dateTime = datetime.strptime(monthYear, "%Y-%m")
@@ -436,6 +484,12 @@ def getSixMonthsAgo(monthYear):
 	newDateTime += timedelta(days=-1)
 
 	return(newDateTime)
+
+# ===============================================================================================================
+
+
+
+### STAFF USE CASES ###
 
 @app.route('/employeeLoginAuth', methods=['GET', 'POST'])
 def employeeLoginAuth():
@@ -468,7 +522,10 @@ def employeeLoginAuth():
 		error = 'Invalid login or email'
 		return render_template('login.html', error=error)
 	
-#Authenticates the register
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
+# Authenticates the register
 @app.route('/employeeRegisterAuth', methods=['GET', 'POST'])
 def employeeRegisterAuth():
 	airline_name = request.form['airline']
@@ -524,11 +581,14 @@ def employeeRegisterAuth():
 		
 		return render_template('register.html', error=error, airlines=airlines)
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 @app.route('/maintenance')
 def maintenance():
 	fields = homepage_fields()
 	return render_template("maintenance.html", username = fields[0], admin = fields[3])
+
 
 @app.route('/maintenanceForm', methods=['GET', 'POST'])
 def maintenanceForm():
@@ -587,8 +647,8 @@ def maintenanceForm():
 	data = {'start_date' : start, 'end_date' : end, 'id' : id}
 	return render_template('maintenance.html', username = fields[0], admin = fields[3], maintenance = data, success = True)
 
-	# set up a view & ensure the maintenances on the same
-    # plane don't overlap
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews():
@@ -609,16 +669,19 @@ def reviews():
 	else:
 		error = "There are no reviews for this flight yet."
 		return render_template('index.html', username = fields[0], myflights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], error = error)
-	
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 #Page data for the add airplane screen
 @app.route('/addAirplane')
 def addAirplane():
 	return render_template('addairplane.html', airline = session.get("admin"))
 
+
 #When you press submit on the airplane add screen
 @app.route('/confirmAddAirplane', methods = ['GET', 'POST'])
 def confirmAddAirplane():
-
 	cursor = conn.cursor()
 	airplane_id = random.randrange(0, 99999)
 	query = 'SELECT * FROM airplane WHERE airplane_id = %s'
@@ -638,6 +701,9 @@ def confirmAddAirplane():
 
 	return redirect('/')
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 #Page data for the ticket purchase screen
 @app.route('/addFlight')
 def addFlight():
@@ -647,6 +713,7 @@ def addFlight():
 	airports = cursor.fetchall()
 
 	return render_template('addflight.html', airports = airports, airline = session.get("admin"))
+
 
 # adding a new flight to the system
 @app.route('/confirmAddFlight', methods = ['GET', 'POST'])
@@ -726,6 +793,9 @@ def confirmAddFlight():
 
 	return redirect('/')
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 @app.route('/frequency', methods=['GET', 'POST'])
 def frequency():
 	# fields = homepage_fields()
@@ -734,7 +804,9 @@ def frequency():
 	cursor.execute(query, (request.form['first'], request.form['last'], session.get('admin')))
 	data = cursor.fetchall()
 	return render_template('/frequentFliers.html', first=request.form['first'], last=request.form['last'], flights = data)
-	
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 @app.route('/addAirport', methods = ['GET', 'POST'])
 def addAirport():
@@ -757,6 +829,9 @@ def newAirport():
 	cursor.close()
 	return redirect('/')
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 @app.route('/earnedRevenue', methods = ['GET', 'POST'])
 def earnedRevenue():
 	cursor = conn.cursor()
@@ -769,6 +844,9 @@ def earnedRevenue():
 	yearly = cursor.fetchone()["SUM(sold_price)"]
 	return render_template('/earnedrevenue.html', airline = session.get("admin"), monthly = monthly, yearly = yearly)
 
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 @app.route('/changeStatus', methods=['GET', 'POST'])
 def changeStatus():
 	cursor = conn.cursor()
@@ -777,6 +855,9 @@ def changeStatus():
 	cursor.close()
 
 	return redirect('/')
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 @app.route('/seeCustomers', methods=['GET', 'POST'])
 def seeCustomers():
@@ -796,6 +877,9 @@ def seeCustomers():
 		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], error=error)
 	
 	return render_template('/seeCustomers.html', flight_num=flight_num, depDate=departure_date, data=data)
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
 @app.route('/autoPopulate', methods=['GET', 'POST'])
 def autoPopulate():
@@ -839,10 +923,9 @@ def autoPopulate():
 
 					query = 'INSERT INTO flight_departure VALUES (%s, %s, %s, %s)'
 					cursor.execute(query, (airportDepart['code'], flight_num, departureTime, airline['airline_name']))
-	
 	cursor.close()
 	return redirect('/')
-
+# ===============================================================================================================
 """
 #Define route for login
 @app.route('/login')
