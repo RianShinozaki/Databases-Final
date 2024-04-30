@@ -80,7 +80,7 @@ def homepage_fields():
 			cursor.execute(query, (session.get('admin')))
 			frequentFliers = cursor.fetchall()
 		cursor.close()
-	return (username, myFutureFlights, myPastFlights, session.get('admin'), frequentFliers, math.ceil(futureFlightPageNum), session.get("futureFlightPage"), math.ceil(pastFlightPageNum),session.get("pastFlightPage"))
+	return (username, myFutureFlights, myPastFlights, session.get('admin'), frequentFliers, max(1, math.ceil(futureFlightPageNum)), session.get("futureFlightPage"), max(1,math.ceil(pastFlightPageNum)),session.get("pastFlightPage"))
 
 @app.route('/')
 def hello():
@@ -89,9 +89,7 @@ def hello():
 
 @app.route('/logout')
 def logout():
-	session.pop('email')
-	if(session.get('admin')):
-		session.pop('admin')
+	session.clear()
 	return redirect('/login')
 
 @app.route('/lookUpFlight', methods=['GET', 'POST'])
@@ -103,7 +101,7 @@ def lookUpFlight():
 	departureDate = request.form['departureDate']
 
 	cursor = conn.cursor()
-	query = 'SELECT name, num, depTime, arrTime, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
+	query = 'SELECT name, num, depTime, arrTime, base_price, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
 	cursor.execute(query, (departureAirport, arrivalAirport, departureDate))
 	data = cursor.fetchall()
 
@@ -229,12 +227,31 @@ def selectTicket():
 @app.route('/ticketPurchase')
 def purchaseTicket():
 	cursor = conn.cursor()
-	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE num = %s AND name = %s AND depTime = %s;'
+	query = 'SELECT name, num, depTime, arrTime, base_price FROM lookUpFlight WHERE num = %s AND name = %s AND depTime = %s;'
 	cursor.execute(query, (session.get('selected_flight')[0],session.get('selected_flight')[1],session.get('selected_flight')[2]))
 	flightInfo = cursor.fetchall()
 	error = None
+
+	query = 'SELECT COUNT(ticket_id) FROM ticket WHERE flight_num = %s AND airline_name = %s AND departure_date_Time = %s; '
+	cursor.execute(query, (session.get('selected_flight')[0],session.get('selected_flight')[1],session.get('selected_flight')[2]))
+	ticket_count = cursor.fetchone()
+	query = 'SELECT num_seats FROM airplane, flight WHERE flight_num = %s AND flight.airline_name = %s AND departure_date_Time = %s AND airplane.airplane_id = flight.airplane_id'
+	cursor.execute(query, (session.get('selected_flight')[0],session.get('selected_flight')[1],session.get('selected_flight')[2]))
+	numseats = cursor.fetchone()
+	seatsLeft = numseats['num_seats'] - ticket_count['COUNT(ticket_id)']
+	sellPrice = flightInfo[0]['base_price']
+
 	cursor.close()
-	return render_template('ticketpurchase.html', flightInfo = flightInfo)
+
+	if(seatsLeft <= numseats['num_seats'] * 0.8):
+		sellPrice = float(sellPrice) * 1.25
+
+	sellPrice = round(sellPrice, 2)
+	sellPrice = "%0.2f" % sellPrice
+
+	session['ticketSellPrice'] = sellPrice
+
+	return render_template('ticketpurchase.html', flightInfo = flightInfo, seatsLeft = seatsLeft, sellPrice = sellPrice)
 
 #When you press "purchase" on the ticket screen
 @app.route('/confirmPurchaseTicket', methods = ['GET', 'POST'])
@@ -254,7 +271,7 @@ def confirmPurchaseTicket():
 
 	#Insert into ticket_purchase using ticket ID
 	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('email'), datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], 100.00))
+	cursor.execute(query, (ticketid, session.get('email'), datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], session.get("ticketSellPrice")))
 
 	#Insert into ticket
 	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
