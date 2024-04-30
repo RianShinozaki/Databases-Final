@@ -254,14 +254,9 @@ def confirmPurchaseTicket():
 	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
 	cursor.execute(query, (ticketid, session.get('email'), datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], 100.00))
 
-	#Get more flight info using saved flight num
-	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE num = %s;'
-	cursor.execute(query, (session.get('selected_flight')))
-	flightInfo = cursor.fetchone()
-
 	#Insert into ticket
 	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('selected_flight'), flightInfo['name'], flightInfo['depTime'],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
+	cursor.execute(query, (ticketid, session.get('selected_flight')[0], session.get('selected_flight')[1], session.get('selected_flight')[2],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
 	cursor.close()
 
 	session.pop('selected_flight')
