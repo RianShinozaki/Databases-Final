@@ -30,8 +30,8 @@
                 <p class="error"><strong>Error:</strong> {{error}}</p>
                 {% for time in maintenance %}
                     <tr>
-                        <td> Maintenance ID  :  {{time['maintenance_id']}} </td>
-                        <td> {{time['start_date']}}  to  {{time['end_date']}}</td>
+                        <strong><td> Maintenance ID  :  {{time['maintenance_id']}} -- </td></strong>
+                        <strong><td> {{time['start_date']}}  to  {{time['end_date']}}</td></strong>
                     </tr>
                 {% endfor %}
             {% endif %}
@@ -41,7 +41,7 @@
                 <table>
                     {% for ids in maintenance %}
                         <tr>
-                            <td> {{ids['airplane_id']}} </td>
+                           <td><strong>{{ids['airplane_id']}}</strong></td>
                         </tr>
                     {% endfor %}
                 </table>

@@ -105,6 +105,11 @@ def lookUpFlight():
 	cursor.execute(query, (departureAirport, arrivalAirport, departureDate))
 	data = cursor.fetchall()
 
+	if(session.get('admin')):
+		query = 'SELECT name, num, depTime, arrTime, base_price, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s AND name = %s'
+		cursor.execute(query, (departureAirport, arrivalAirport, departureDate, session.get('admin')))
+		data = cursor.fetchall()
+
 	error = None
 	if(data):
 		cursor.close()
