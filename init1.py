@@ -204,16 +204,15 @@ def customerRegisterAuth():
 @app.route('/selectTicket', methods=['GET', 'POST'])
 def selectTicket():
 	flightInfo = request.form['flight_num'].split("_")
-	flight_num = flightInfo[0]
-	session['selected_flight'] = flight_num
+	session['selected_flight'] = flightInfo
 	return redirect('ticketPurchase')
 
 #Page data for the ticket purchase screen
 @app.route('/ticketPurchase')
 def purchaseTicket():
 	cursor = conn.cursor()
-	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE num = %s;'
-	cursor.execute(query, (session.get('selected_flight')))
+	query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE num = %s AND name = %s AND depTime = %s;'
+	cursor.execute(query, (session.get('selected_flight')[0],session.get('selected_flight')[1],session.get('selected_flight')[2]))
 	flightInfo = cursor.fetchall()
 	error = None
 	cursor.close()
