@@ -142,6 +142,8 @@
 				{% if username %}
 					{% if not admin %}
 						<th>Action</th>
+					{% elif admin %}
+						<th>Customers</th>
 					{% endif %}
 				{% endif %}
 			
@@ -156,6 +158,13 @@
 							<td>
 								<form action="/selectTicket" method="POST">
 									<p class = "center-aligned-button"><button type="submit" name = "flight_num" value = "{{flight['num']}}_{{flight['name']}}_{{flight['depTime']}}">Select</button></p>
+								</form>
+							</td>
+						{% elif admin %}
+							<td>
+								<form action="/seeCustomers" method="POST">
+									<input name="depTime" type="hidden" value="{{flight['depTime']}}"></input>
+									<p class = "center-aligned-button"><button type="submit" name = "flight_num" value = "{{flight['num']}}">See Customers</button></p>
 								</form>
 							</td>
 						{% endif %}
