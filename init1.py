@@ -257,7 +257,9 @@ def purchaseTicket():
 @app.route('/confirmPurchaseTicket', methods = ['GET', 'POST'])
 def confirmPurchaseTicket():
 	cursor = conn.cursor()
-
+	# This doesn't guarantee unique tickets, so we should look into that
+ 
+	# fix?
 	ticketid = random.randrange(0, 99999)
 	query = 'SELECT * FROM ticket WHERE ticket_id = %s'
 	cursor.execute(query, (ticketid))
@@ -641,7 +643,7 @@ def addFlight():
 
 	return render_template('addflight.html', airports = airports, airline = session.get("admin"))
 
-#When you press "purchase" on the ticket screen
+# adding a new flight to the system
 @app.route('/confirmAddFlight', methods = ['GET', 'POST'])
 def confirmAddFlight():
 
@@ -654,10 +656,32 @@ def confirmAddFlight():
 		flight_num = random.randrange(0, 999)
 		cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin')))
 		exist = cursor.fetchall()
+	
+	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN start_date and end_date'
+	cursor.execute(query, (request.form['airplane_id'], session.get('admin'), request.form['departure_date_time']))
+	exist_start = cursor.fetchall()
+
+	if exist_start:
+		error = "There's maintenance schedueld for Plane#" + str(request.form['airplane_id']) + " during the following time periods:"
+		query = 'SELECT code FROM airport WHERE 1;'
+		cursor.execute(query)
+		airports = cursor.fetchall()
+		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, maintenance=exist_start)
+	
+	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN start_date and end_date'
+	cursor.execute(query, (request.form['airplane_id'], session.get('admin'), request.form['arrival_date_time']))
+	exist_end = cursor.fetchall()
+
+	if exist_end:
+		error = "There's maintenance schedueld for Plane#" + str(request.form['airplane_id']) + " during the following time periods:"
+		query = 'SELECT code FROM airport WHERE 1;'
+		cursor.execute(query)
+		airports = cursor.fetchall()
+		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, maintenance=exist_end)
 
 	#Insert into airplane
 	query = 'INSERT INTO flight VALUES (%s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin'), request.form['airplane_id'], request.form['base_price'], "on-time"))
+	cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin'), request.form['airplane_id'], request.form['base_price'], "On-Time"))
 
 	query = 'INSERT INTO flight_arrival VALUES (%s, %s, %s, %s, %s)'
 	cursor.execute(query, (request.form['arrivalAirport'], flight_num, request.form['departure_date_time'], request.form['arrival_date_time'], session.get('admin')))
