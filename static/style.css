@@ -39,16 +39,12 @@ div.login {
 }
 a.login {
     background-color:var(--palette-3);
-    margin-top: 40px;
     padding: 20px;
     padding-top:10px;
     padding-bottom: 10px;
     border-radius: 15px;
-    margin:auto;
     color:var(--palette-0);
-    vertical-align: center;
-    margin-bottom:100px;
-    line-height: 350%;
+    line-height: 300%;
 }
 
 h1.navigator-header {
