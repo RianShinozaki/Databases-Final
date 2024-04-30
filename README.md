@@ -54,12 +54,12 @@ customer. The ticket will be available again in the system and purchasable by ot
 previous flights (for which he/she purchased tickets and already took that flight) for the airline they
 logged in.
 
-6. `Track My Spending`: Default view will be total amount of money spent in the past year and a bar
+6. ✅ `Track My Spending`: Default view will be total amount of money spent in the past year and a bar
 chart/table showing month wise money spent for last 6 months. He/she will also have option to specify
 a range of dates to view total amount of money spent within that range and a bar chart/table showing
 month wise money spent within that range.
 
-7. `Logout`: The session is destroyed and a “goodbye” page or the login page is displayed.
+7. ✅ `Logout`: The session is destroyed and a “goodbye” page or the login page is displayed.
 
 
 ### Airline Staff use cases:
@@ -70,7 +70,7 @@ the next 30 days. He/she will be able to see all the current/future/past flights
 he/she works for based range of dates, source/destination airports/city etc. He/she will be able to see
 all the customers of a particular flight.
 
-2. `Create new flights`: He or she creates a new flight, providing all the needed data, via forms. The
+2. ✅ `Create new flights`: He or she creates a new flight, providing all the needed data, via forms. The
 application should prevent unauthorized users from doing this action. While creating a flight, a check
 should be performed that if an airport is domestic, it should only be able to handle domestic flights, and
 same applies for international airports. 
@@ -78,7 +78,7 @@ same applies for international airports.
 > [Note]
 > Defaults will be showing all the future flights operated by the airline he/she works for the next 30 days.
 
-3. `Change Status of flights`: He or she changes a flight status (from on-time to delayed or vice versa) via
+3. ✅ `Change Status of flights`: He or she changes a flight status (from on-time to delayed or vice versa) via
 forms.
 
 4. `Add airplane in the system`: He or she adds a new airplane, providing all the needed data, via forms.
