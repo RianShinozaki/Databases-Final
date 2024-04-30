@@ -47,11 +47,11 @@ def homepage_fields():
 			name = cursor.fetchone()
 			username = name['first_name'] + ' ' + name['last_name']
 
-			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpFlight NATURAL JOIN ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
+			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpTicket WHERE customer_email = %s AND depTime > CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('email')))
 		
 		myFutureFlights = cursor.fetchall()
-		print(myFutureFlights)
+
 		futureFlightPageNum = len(myFutureFlights)/15
 		sliceBegin = ((int(session.get("futureFlightPage")-1) * 15))
 		sliceEnd = min( int(session.get("futureFlightPage")) * 15, len(myFutureFlights))
@@ -63,13 +63,15 @@ def homepage_fields():
 			query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE name = %s AND depTime <= CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('admin')))
 		else:
-			query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime <= CURRENT_TIMESTAMP();'
+			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpTicket WHERE customer_email = %s AND depTime < CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('email')))
 		
 		myPastFlights = cursor.fetchall()
+		print(myPastFlights)
+
 		pastFlightPageNum = len(myPastFlights)/20
 		sliceBegin = ((int(session.get("pastFlightPage")-1) * 15))
-		sliceEnd = min( int(session.get("pastFlightPage")) * 15, len(myPastFlights)-1)
+		sliceEnd = min( int(session.get("pastFlightPage")) * 15, len(myPastFlights))
 		myPastFlights = myPastFlights[sliceBegin : sliceEnd]
 		
 		error = None			

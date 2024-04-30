@@ -210,7 +210,9 @@ SELECT DISTINCT name,
        status,		
 	   departureAirport, 
        arrivalAirport,
-       ticket_purchase.sold_price as price
+       ticket_purchase.sold_price as price,
+       ticket_id,
+       customer_email
 FROM ticket NATURAL JOIN ticket_purchase NATURAL JOIN lookupflight
 WHERE departure_date_time = depTime AND airline_name = name AND flight_num = num;
 
