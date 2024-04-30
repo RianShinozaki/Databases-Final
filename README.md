@@ -50,7 +50,7 @@ flights.
 in the future and cancel the purchase. After cancellation, the ticket will no longer belong to the
 customer. The ticket will be available again in the system and purchasable by other customers.
 
-5. `Give Ratings and Comment on previous flights`: Customer will be able to rate and comment on their
+5. ⛔️ `Give Ratings and Comment on previous flights`: Customer will be able to rate and comment on their
 previous flights (for which he/she purchased tickets and already took that flight) for the airline they
 logged in.
 
@@ -88,7 +88,7 @@ she/he will be able to see all the airplanes owned by the airline he/she works f
 5. ✅ `Add new airport in the system`: He or she adds a new airport, providing all the needed data, via
 forms. The application should prevent unauthorized users from doing this action.
 
-6. `View flight ratings`: Airline Staff will be able to see each flight’s average ratings and all the comments
+6. ⛔️ `View flight ratings`: Airline Staff will be able to see each flight’s average ratings and all the comments
 and ratings of that flight given by the customers.
 
 7. ✅ `Schedule Maintenance`: Airline staff should be able to schedule maintenance (by providing start date
@@ -107,10 +107,10 @@ last year.
 
 ### Other Things to Fix:
 1. ✅ `Airplane Ages`: make sure that airplane ages are calculated based on today's date
-2. `Return Flight Parameters`: account for a return flight when searching for a flight
-3. `Ticket Prices` : calculate new prices based on tickets already sold
+2. ⛔️ `Return Flight Parameters`: account for a return flight when searching for a flight
+3. ⛔️ `Ticket Prices` : calculate new prices based on tickets already sold
 4. ❎ `Invalid Dates` : make sure that the dates don't contradict each other or the context
 5. ✅ `Maintenance Overlap` : make sure that a plane can't be assigned to a flight during maintenance
 6. ✅ `Schedule Multiple Flights with the same Airplane` : no good
-7. `Enforcing Domestic & International Flights` : wtf
-8. `Flight is Full` : how are we going to show if a flight is full? Remove buy button?
+7. ⛔️ `Enforcing Domestic & International Flights` : wtf
+8. ⛔️ `Flight is Full` : how are we going to show if a flight is full? Remove buy button?
