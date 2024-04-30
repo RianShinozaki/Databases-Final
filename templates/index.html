@@ -50,21 +50,22 @@
 		<div class = "search-results">
 			{% if admin %}
 			<p><strong>Future airline flights </strong></p>
-			<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
-				<p><strong>Page </strong></p>
-				<input type = "numeric" value = 1>
-				<p><strong> of </strong></p>
-				<input type = "numeric" value = 1 readonly = true>
-				<input type = "submit" value = refresh >
-			</span>
-			
-			
-			
-			</br></br></br>
 		
 			{% elif username %}
 			<p><strong>My future flights</strong></p>
 			{% endif %}
+
+			<form action="/changeFutureFlightPage" method="POST">
+				<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
+					<p><strong>Page </strong></p>
+					<input type = "numeric" value = {{futureFlightPage}} name = "futureFlightPage">
+					<p><strong> of </strong></p>
+					<input type = "numeric" value = {{futureFlightPageNum}} name = "futureFlightPages" readonly = true>
+					<input type = "submit" value = refresh >
+				</span>
+			</form>
+			</br></br></br>
+
 			<table>
 				<th>Airline Name</th>
 				<th>Flight Number</th>
@@ -192,11 +193,21 @@
 
 		{% if username %}
 		<div class = "search-results">
-				{% if admin %}
-					<p><strong>Past airline flights</strong></p>
-				{% elif username %}
-					<p><strong>My past flights</strong></p>
-				{% endif %}
+			{% if admin %}
+				<p><strong>Past airline flights</strong></p>
+			{% elif username %}
+				<p><strong>My past flights</strong></p>
+			{% endif %}
+			<form action="/changePastFlightPage" method="POST">
+				<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
+					<p><strong>Page </strong></p>
+					<input type = "numeric" value = {{pastFlightPage}} name = "pastFlightPage">
+					<p><strong> of </strong></p>
+					<input type = "numeric" value = {{pastFlightPageNum}} name = "pastFlightPages" readonly = true>
+					<input type = "submit" value = refresh >
+				</span>
+			</form>
+			</br></br></br>
 			<table>
 				<th>Airline Name</th>
 				<th>Flight Number</th>

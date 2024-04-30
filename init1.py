@@ -4,6 +4,7 @@ import pymysql.cursors
 import hashlib
 import random
 from datetime import datetime, timedelta
+import math
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -33,9 +34,11 @@ def homepage_fields():
 		else:
 			query = 'SELECT name, num, depTime, arrTime, ticket_id, status FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime > CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('email')))
-		
-		
 		myFutureFlights = cursor.fetchall()
+		futureFlightPageNum = len(myFutureFlights)/15
+		sliceBegin = ((int(session.get("futureFlightPage")-1) * 15))
+		sliceEnd = min( int(session.get("futureFlightPage")) * 15, len(myFutureFlights)-1)
+		myFutureFlights = myFutureFlights[sliceBegin : sliceEnd]
 
 		if(session.get('admin')):
 			query = 'SELECT name, num, depTime, arrTime FROM lookUpFlight WHERE name = %s AND depTime <= CURRENT_TIMESTAMP();'
@@ -44,19 +47,23 @@ def homepage_fields():
 			query = 'SELECT name, num, depTime, arrTime, ticket_id FROM lookUpFlight, ticket WHERE ticket.customer_email = %s AND ticket.flight_num = lookupflight.num AND depTime <= CURRENT_TIMESTAMP();'
 			cursor.execute(query, (session.get('email')))
 		myPastFlights = cursor.fetchall()
-
+		pastFlightPageNum = len(myPastFlights)/20
+		sliceBegin = ((int(session.get("pastFlightPage")-1) * 15))
+		sliceEnd = min( int(session.get("pastFlightPage")) * 15, len(myPastFlights)-1)
+		myPastFlights = myPastFlights[sliceBegin : sliceEnd]
+		
 		error = None			
 		if(session.get('admin')):
 			query = 'SELECT customer_firstname, customer_lastname, COUNT(ticket_id) as flight_amt FROM ticket WHERE airline_name = %s GROUP BY customer_firstname, customer_lastname ORDER BY COUNT(ticket_id) DESC, customer_lastname'
 			cursor.execute(query, (session.get('admin')))
 			frequentFliers = cursor.fetchall()
 	cursor.close()
-	return (username, myFutureFlights, myPastFlights, session.get('admin'), frequentFliers)
+	return (username, myFutureFlights, myPastFlights, session.get('admin'), frequentFliers, math.ceil(futureFlightPageNum), session.get("futureFlightPage"), math.ceil(pastFlightPageNum),session.get("pastFlightPage"))
 
 @app.route('/')
 def hello():
 	fields = homepage_fields()
-	return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4])
+	return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], futureFlightPageNum = fields[5], futureFlightPage = fields[6], pastFlightPageNum = fields[7], pastFlightPage = fields[8])
 
 @app.route('/logout')
 def logout():
@@ -85,6 +92,21 @@ def lookUpFlight():
 	else:
 		error = "No flights match those parameters at this time."
 		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = data)
+
+@app.route('/changeFutureFlightPage', methods=['GET', 'POST'])
+def changeFutureFlightPage():
+	flightPage = int(request.form['futureFlightPage'])
+	flightPages = int(request.form['futureFlightPages'])
+	session['futureFlightPage'] = max(1, min(flightPage, flightPages))
+	return redirect('/')
+
+@app.route('/changePastFlightPage', methods=['GET', 'POST'])
+def changePastFlightPage():
+	flightPage = int(request.form['pastFlightPage'])
+	flightPages = int(request.form['pastFlightPages'])
+	session['pastFlightPage'] = max(1, min(flightPage, flightPages))
+	return redirect('/')
+
 
 @app.route('/login')
 def login():
@@ -116,6 +138,8 @@ def customerLoginAuth():
 		#creates a session for the the user
 		#session is a built in
 		session['email'] = username
+		session['futureFlightPage'] = 1
+		session['pastFlightPage'] = 1
 		return redirect('/')
 	else:
 		#returns an error message to the html page
@@ -389,6 +413,8 @@ def employeeLoginAuth():
 		session['email'] = username
 		# authorization level of login
 		session["admin"] = data['airline_name']
+		session['futureFlightPage'] = 1
+		session['pastFlightPage'] = 1
 		return redirect('/')
 	else:
 		#returns an error message to the html page
@@ -427,6 +453,9 @@ def employeeRegisterAuth():
 	if(not data and airline):
 		session['email'] = username
 		session['admin'] = airline
+		session['futureFlightPage'] = 1
+		session['pastFlightPage'] = 1
+
 		query = 'INSERT INTO airline_staff VALUES (%s, %s, %s, %s, %s, %s)'
 		password = (hashlib.sha256(password.encode('utf-8'))).hexdigest()
 		cursor.execute(query, (username, airline_name, password, first_name, last_name, dob))
