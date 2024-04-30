@@ -16,7 +16,7 @@ CREATE TABLE airport(
 );
 
 CREATE TABLE flight_arrival(
-	code 				varchar(3),
+	arrival_code 				varchar(3),
 	flight_num 			bigint,
 	departure_date_time 		datetime,
 	arrival_date_time		datetime,
@@ -29,7 +29,7 @@ CREATE TABLE flight_arrival(
 );
 
 CREATE TABLE flight_departure(
-	code 				varchar(3),
+	departure_code 				varchar(3),
 	flight_num 			bigint,
 	departure_date_time 		datetime,
 	airline_name 			varchar(50),

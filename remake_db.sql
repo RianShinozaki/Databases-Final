@@ -202,6 +202,19 @@ FROM flight, flight_departure, flight_arrival
 WHERE flight.departure_date_time = flight_departure.departure_date_time
       AND flight_departure.departure_date_time = flight_arrival.departure_date_time;
 
+CREATE VIEW lookUpTicket AS
+SELECT DISTINCT name, 
+	   num, 	
+ 	   depTime, 
+       arrTime,
+       status,		
+	   departureAirport, 
+       arrivalAirport,
+       ticket_purchase.sold_price as price,
+       ticket_id,
+       customer_email
+FROM ticket NATURAL JOIN ticket_purchase NATURAL JOIN lookupflight
+WHERE departure_date_time = depTime AND airline_name = name AND flight_num = num;
 
 -- Anna Tanaka Viertler & Kai Shinozaki-Conefrey
 
