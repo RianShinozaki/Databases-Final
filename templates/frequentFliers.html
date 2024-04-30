@@ -10,26 +10,33 @@
 	<title>FlaskFlights</title>
 </head>
 <body>
-    <a href="/">Home</a>
-    <div class = "search-results">
-        <style type="text/css">
-            table, th, td{
-                border: 1px solid black;
-            }
-        </style>
-        <p><strong>{{first}} {{last}}'s Flights' :</strong></p>
-        <table>
-            <th>Flight #</th>
-            <th>Departure Date</th>
-            <th>Ticked ID</th>
-        
-            {% for flight in flights %}
-                <tr>
-                    <td>{{flight['flight_num']}}</td>
-                    <td>{{flight['departure_date_time']}}</td>
-                    <td>{{flight['ticket_id']}}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
+    <nav>
+		<h1 class = "navigator-header">FlaskFlights</h2>
+		<div class = "login">
+		<a class = "login" href="/">HOME</a>
+		</div>
+	</nav>
+    <main>
+        <div class = "search-results">
+            <style type="text/css">
+                table, th, td{
+                    border: 1px solid black;
+                }
+            </style>
+            <p><strong>{{first}} {{last}}'s Flights :</strong></p>
+            <table>
+                <th>Flight #</th>
+                <th>Departure Date</th>
+                <th>Ticket ID</th>
+            
+                {% for flight in flights %}
+                    <tr>
+                        <td>{{flight['flight_num']}}</td>
+                        <td>{{flight['departure_date_time']}}</td>
+                        <td>{{flight['ticket_id']}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </main>
 </body>

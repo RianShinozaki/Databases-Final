@@ -9,17 +9,23 @@
 	<title>FlaskFlights</title>
 </head>
 <body>
-    <h2>Earned Revenue for {{airline}}</h2>
-    <a href="/">Home</a>
-    <div class = "input-form">
-        <table>
-            <th>Last Month's Revenue</th>
-            <th>Last Year's Revenue</th>
-                <tr>
-                    <td>{{monthly}}</td>
-                    <td>{{yearly}}</td>
-                </tr>
-        </table>
-    </div>       
-
+    <nav>
+		<h1 class = "navigator-header">FlaskFlights</h2>
+		<div class = "login">
+		<a class = "login" href="/">HOME</a>
+		</div>
+	</nav>
+    <main>
+        <div class = "input-form">
+            <h2>Earned Revenue for {{airline}}</h2>
+            <table>
+                <th>Last Month's Revenue</th>
+                <th>Last Year's Revenue</th>
+                    <tr>
+                        <td>{{monthly}}</td>
+                        <td>{{yearly}}</td>
+                    </tr>
+            </table>
+        </div>     
+    </main>  
 </body>

@@ -10,11 +10,26 @@
 	<title>FlaskFlights</title>
 </head>
 <body>
-    <a href="/">Home</a>
-    <h2>Here are the reviews for Flight # {{num}} which departed on {{departure}} :</h2>
-    {% for review in flights %}
-        <td>Email: {{review['customer_email']}}</td>
-        <td>Rating: {{review['rating']}} out of 10</td>
-        <td>Comment: {{review['comment']}}</td>
-    {% endfor %}
+    <nav>
+		<h1 class = "navigator-header">FlaskFlights</h2>
+		<div class = "login">
+		<a class = "login" href="/">HOME</a>
+		</div>
+	</nav>
+    <main>
+        <div class = "search-results">
+            <h2>Here are the reviews for Flight # {{num}} which departed on {{departure}} :</h2>
+            <table>
+                <th>Email</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                {% for review in flights %}
+                <tr>
+                    <td>{{review['customer_email']}}</td>
+                    <td>{{review['rating']}} out of 10</td>
+                    <td>{{review['comment']}}</td>
+                </tr>
+                {% endfor %}
+        </div>
+    </main>
 </body>

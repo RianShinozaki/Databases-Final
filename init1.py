@@ -629,7 +629,7 @@ def earnedRevenue():
 
 	cursor.execute(query, (session.get('admin'), datetime.now() + timedelta(days=-365), datetime.now())) 
 	yearly = cursor.fetchone()["SUM(sold_price)"]
-	return render_template('/earnedrevenue.html', monthly = monthly, yearly = yearly)
+	return render_template('/earnedrevenue.html', airline = session.get("admin"), monthly = monthly, yearly = yearly)
 
 @app.route('/changeStatus', methods=['GET', 'POST'])
 def changeStatus():

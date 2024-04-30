@@ -8,40 +8,48 @@
 	<meta name="keywords" content="">
 	<title>FlaskFlights</title>
 </head>
+
 <body>
-    <h2>PURCHASE TICKET NOW</h2>
-    <a href="/">Home</a>
-    <p>{{flightInfo['name']}}</p>
-    <table>
-        <th>Airline Name</th>
-        <th>Flight Number</th>
-        <th>Departure Time</th>
-        <th>Arrival Time</th>
-        {% for flight in flightInfo %}
-            <tr>
-                <td>{{flight['name']}}</td>
-                <td>{{flight['num']}}</td>
-                <td>{{flight['depTime']}}</td>
-                <td>{{flight['arrTime']}}</td>
-            </tr>
-        {% endfor %}
-    </table>
+	<nav>
+		<h1 class = "navigator-header">FlaskFlights</h2>
+		<div class = "login">
+		<a class = "login" href="/">HOME</a>
+		</div>
+	</nav>
+    <main>
+        <div class = 'input-form-elements'>
+            <h2>PURCHASE TICKET NOW</h2>
+            <p>{{flightInfo['name']}}</p>
+            <table>
+                <th>Airline Name</th>
+                <th>Flight Number</th>
+                <th>Departure Time</th>
+                <th>Arrival Time</th>
+                {% for flight in flightInfo %}
+                    <tr>
+                        <td>{{flight['name']}}</td>
+                        <td>{{flight['num']}}</td>
+                        <td>{{flight['depTime']}}</td>
+                        <td>{{flight['arrTime']}}</td>
+                    </tr>
+                {% endfor %}
+            </table></br>
 
-    <form action="/confirmPurchaseTicket" method="POST">
-        <input type="text" name = "firstname" placeholder="First Name" required/> </br>
-        <input type="text" name = "lastname" placeholder="Last Name" required/> </br>
-        <p>Customer DOB</p>
-        <input type="date" name = "birthday" required/> </br>
-        <select id="cardtype" name="cardtype">
-            <option value="credit" selected>Credit Card</option>
-            <option value="debit">Debit Card</option>
-          </select>
-        <input type="text" name = "cardnumber" placeholder="Card Number" required/> </br>
-        <input type="text" name = "cardfirstname" placeholder="Cardholder First Name" required/> </br>
-        <input type="text" name = "cardlastname" placeholder="Cardholder Last Name" required/> </br>
-        <input type="month" name = "cardexpirationdate" placeholder="Expiration Date" required/> </br>
-        <input type="submit" value = Purchase />
-    </form>
-                    
-
+            <form action="/confirmPurchaseTicket" method="POST">
+                <input type="text" name = "firstname" placeholder="First Name" required/> </br>
+                <input type="text" name = "lastname" placeholder="Last Name" required/> </br>
+                <p>Customer DOB</p>
+                <input type="date" name = "birthday" required/> </br>
+                <select id="cardtype" name="cardtype">
+                    <option value="credit" selected>Credit Card</option>
+                    <option value="debit">Debit Card</option>
+                </select>
+                <input type="text" name = "cardnumber" placeholder="Card Number" required/> </br>
+                <input type="text" name = "cardfirstname" placeholder="Cardholder First Name" required/> </br>
+                <input type="text" name = "cardlastname" placeholder="Cardholder Last Name" required/> </br>
+                <input type="month" name = "cardexpirationdate" placeholder="Expiration Date" required/> </br>
+                <input type="submit" value = Purchase /></br>
+            </form>
+        </div>
+    </main>          
 </body>

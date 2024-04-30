@@ -10,62 +10,66 @@
 	<title>FlaskFlights</title>
 </head>
 <body>
-    <style type="text/css">
-        table, th, td{
-            border: 1px solid black;
-        }
-    </style>
-    <h2>REGISTER</h2>
-    <a href="/">Home</a>
-    <figure class="table">
-        <table>
-            <tbody>
-                <tr>
-                    <td>CUSTOMER</td>
-                    <td>EMPLOYEE</td>
-                </tr>
-                <tr>
-                    <td>
-                        <form action="/customerRegisterAuth" method="POST">
-                            <input type="email" name = "email" placeholder="email" required/> </br>
-                            <input type="password" name = "password" placeholder="password" required/></br>
-                            <input type="password" name = "confirmpassword" placeholder="confirm password" required/></br>
-                            <input type="text" name = "firstName" placeholder = "First Name" required/></br>
-                            <input type="text" name = "lastName" placeholder = "Last Name" required/></br>
-                            <input type="text" name = "buildingNum" placeholder = "Building No." required/></br>
-                            <input type="text" name = "street" placeholder = "Street" required/></br>
-                            <input type="text" name = "aptNum" placeholder = "Apartment No." required/></br>
-                            <input type="text" name = "city" placeholder = "City" required/></br>
-                            <input type="text" name = "state" placeholder = "State" required/></br>
-                            <input type="text" name = "zipCode" placeholder = "Zip Code" required/></br>
-                            <input type="text" name = "passportNum" placeholder = "Passport Number" required/></br>
-                            <input type="date" name = "passportExpiration" placeholder = "Passport Expiration" required/>Passport Expiration</br>
-                            <input type="text" name = "passportCountry" placeholder = "Passport Country" required/></br>
-                            <input type="date" name = "dob" placeholder = "Date of Birth" required/>Date of Birth</br>
+	<nav>
+		<h1 class = "navigator-header">FlaskFlights</h2>
+		<div class = "login">
+		<a class = "login" href="/">HOME</a>
+		</div>
+	</nav>
+    <main>
+        <div class = "input-form-elements">
+            <h2>REGISTER</h2>
+            <figure class="table">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>CUSTOMER</td>
+                            <td>EMPLOYEE</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <form action="/customerRegisterAuth" method="POST">
+                                    <input type="email" name = "email" placeholder="email" required/> </br>
+                                    <input type="password" name = "password" placeholder="password" required/></br>
+                                    <input type="password" name = "confirmpassword" placeholder="confirm password" required/></br>
+                                    <input type="text" name = "firstName" placeholder = "First Name" required/></br>
+                                    <input type="text" name = "lastName" placeholder = "Last Name" required/></br>
+                                    <input type="text" name = "buildingNum" placeholder = "Building No." required/></br>
+                                    <input type="text" name = "street" placeholder = "Street" required/></br>
+                                    <input type="text" name = "aptNum" placeholder = "Apartment No." required/></br>
+                                    <input type="text" name = "city" placeholder = "City" required/></br>
+                                    <input type="text" name = "state" placeholder = "State" required/></br>
+                                    <input type="text" name = "zipCode" placeholder = "Zip Code" required/></br>
+                                    <input type="text" name = "passportNum" placeholder = "Passport Number" required/></br>
+                                    <input type="date" name = "passportExpiration" placeholder = "Passport Expiration" required/>Passport Expiration</br>
+                                    <input type="text" name = "passportCountry" placeholder = "Passport Country" required/></br>
+                                    <input type="date" name = "dob" placeholder = "Date of Birth" required/>Date of Birth</br>
 
-                            <input type="submit" value = Register />
-                            {% if error %}
-                                <p class="error"><strong>Error:</strong> {{error}}</p>
-                            {% endif %}
-                        </form>
-                    </td>
-                    <td>
-                        <form action="/employeeRegisterAuth" method="POST">
-                            <input type="text" name = "airline" placeholder = "Airline" required/></br>
-                            <input type="text" name = "first_name" placeholder = "First Name" required/></br>
-                            <input type="text" name = "last_name" placeholder = "Last Name" required/></br>
-                            <input type="date" name = "dob" placeholder = "Date of Birth" required/>Date of Birth</br>
-                            <input type="text" name = "username" placeholder="username" required/> </br>
-                            <input type="password" name = "password" placeholder="password" required/></br>
-                            <input type="password" name = "confirmpassword" placeholder="confirm password" required/></br>
-                            <input type="submit" value = Login />
-                            {% if error %}
-                                <p class="error"><strong>Error:</strong> {{error}}</p>
-                            {% endif %}
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </figure>
+                                    <input type="submit" value = Register />
+                                    {% if error %}
+                                        <p class="error"><strong>Error:</strong> {{error}}</p>
+                                    {% endif %}
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/employeeRegisterAuth" method="POST">
+                                    <input type="text" name = "airline" placeholder = "Airline" required/></br>
+                                    <input type="text" name = "first_name" placeholder = "First Name" required/></br>
+                                    <input type="text" name = "last_name" placeholder = "Last Name" required/></br>
+                                    <input type="date" name = "dob" placeholder = "Date of Birth" required/>Date of Birth</br>
+                                    <input type="text" name = "username" placeholder="username" required/> </br>
+                                    <input type="password" name = "password" placeholder="password" required/></br>
+                                    <input type="password" name = "confirmpassword" placeholder="confirm password" required/></br>
+                                    <input type="submit" value = Login />
+                                    {% if error %}
+                                        <p class="error"><strong>Error:</strong> {{error}}</p>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </figure>
+        </div>
+    </main>
 </body>

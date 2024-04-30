@@ -9,38 +9,45 @@
 	<title>FlaskFlights</title>
 </head>
 <body>
-    <style type="text/css">
-        table, th, td{
-            border: 1px solid black;
-        }
-    </style>
+	<nav>
+		<h1 class = "navigator-header">FlaskFlights</h2>
+		<div class = "login">
+		<a class = "login" href="/">HOME</a>
+		</div>
+	</nav>
+    <main>
+        <div class = "input-form-elements">
+            <style type="text/css">
+                table, th, td{
+                    border: 1px solid black;
+                }
+            </style>
 
-    <h2>How was your flight? Leave us a review!</h2>
-    <a href="/">Home</a>
-    <p>{{flightInfo['name']}}</p>
-    <table>
-        <th>Airline Name</th>
-        <th>Flight Number</th>
-        <th>Departure Time</th>
-        <th>Customer First Name</th>
-        <th>Customer Last Name</th>
-        {% for flight in flightInfo %}
-            <tr>
-                <td>{{flight['airline_name']}}</td>
-                <td>{{flight['flight_num']}}</td>
-                <td>{{flight['departure_date_time']}}</td>
-                <td>{{flight['customer_firstname']}}</td>
-                <td>{{flight['customer_lastname']}}</td>
-            </tr>
-        {% endfor %}
-    </table>
+            <h2>How was your flight? Leave us a review!</h2>
+            <p>{{flightInfo['name']}}</p>
+            <table>
+                <th>Airline Name</th>
+                <th>Flight Number</th>
+                <th>Departure Time</th>
+                <th>Customer First Name</th>
+                <th>Customer Last Name</th>
+                {% for flight in flightInfo %}
+                    <tr>
+                        <td>{{flight['airline_name']}}</td>
+                        <td>{{flight['flight_num']}}</td>
+                        <td>{{flight['departure_date_time']}}</td>
+                        <td>{{flight['customer_firstname']}}</td>
+                        <td>{{flight['customer_lastname']}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
 
-    <form action="/confirmReviewTicket" method="POST">
-        <label for="review">Comments:</label>
-        <textarea id="review" name="reviewComment" rows="4" cols="50" required></textarea>
-        <input type="number" inputmode="numeric" pattern="[0-10]*" name = "reviewScore" placeholder = "Score out of 10" required/> </br>
-        <input type="submit" value = "Submit Review" />
-    </form>
-                    
-
+            <form action="/confirmReviewTicket" method="POST">
+                <label for="review">Comments:</label></br>
+                <textarea id="review" name="reviewComment" rows="4" cols="50" required></textarea></br>
+                <input type="number" inputmode="numeric" pattern="[0-10]*" name = "reviewScore" placeholder = "Score out of 10" required/> </br>
+                <input type="submit" value = "Submit Review" /></br>
+            </form>
+        </div>
+    </main>
 </body>
