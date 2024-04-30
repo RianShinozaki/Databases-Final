@@ -551,6 +551,8 @@ def confirmAddAirplane():
 	#Insert into airplane
 	query = 'INSERT INTO airplane VALUES (%s, %s, %s, %s, %s, %s, %s)'
 	cursor.execute(query, (airplane_id, session.get('admin'), request.form['num_seats'], request.form['manufacturing_company'], request.form['model_num'], request.form['manufacturing_date'], 0))
+	query = 'UPDATE airplane SET age = (DATEDIFF(NOW(), manufacturing_date)) / 365 WHERE airline_name = %s AND model_num = %s'
+	cursor.execute (query, (session.get('admin'), request.form['model_num']))
 	cursor.close()
 
 	return redirect('/')

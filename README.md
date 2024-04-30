@@ -104,6 +104,7 @@ last year.
 
 
 ### Other Things to Fix:
-1. `Airplane Ages`: make sure that airplane ages are calculated based on today's date
+1. ✅ `Airplane Ages`: make sure that airplane ages are calculated based on today's date
 2. `Return Flight Parameters`: account for a return flight when searching for a flight
 3. `Ticket Prices` : calculate new prices based on tickets already sold
+4. `Invalid Dates` : make sure that the dates don't contradict each other or the context

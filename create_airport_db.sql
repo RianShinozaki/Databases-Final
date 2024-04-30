@@ -61,7 +61,6 @@ CREATE TABLE airplane(
     manufacturing_company	varchar(50),
     model_num				bigint,
     manufacturing_date		date,
-    age					    bigint,
 
     PRIMARY KEY (airplane_id),
     FOREIGN KEY (airline_name) REFERENCES airline(airline_name)
