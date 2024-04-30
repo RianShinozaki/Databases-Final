@@ -209,7 +209,6 @@ WHERE flight.departure_date_time = flight_departure.departure_date_time
 INSERT INTO airport 
 VALUES ('JFK', 'John F. Kennedy', 'New York City', 'United States', 4, 'both'),
 ('PVG', 'Shanghai Pudong International Airport', 'Shanghai', 'China', 4, 'international'),
-('LAX', 'Los Angeles International Airport', 'Los Angeles', 'United States', 9, 'both'),
 ('SFO', 'San Francisco International Airport', 'San Francisco', 'United States', 4, 'both'),
 ('NRT', 'Narita International Airport', 'Narita', 'Japan', 3, 'both');
 
@@ -245,10 +244,7 @@ INSERT INTO airplane VALUES
 (1242, 'Delta Airlines', 80, 'Airbus', 2306, '2001-01-04'),
 (1243, 'Frontier Airlines', 80, 'Boeing', 0001, '2003-04-06'),
 (1244, 'Frontier Airlines', 80, 'Textron', 0303, '2002-02-09'),
-(1245, 'Frontier Airlines', 80, 'Airbus', 2306, '2001-01-04'),
-(1246, 'Spirit Airlines', 80, 'Boeing', 0001, '2003-04-06'),
-(1247, 'Spirit Airlines', 80, 'Textron', 0303, '2002-02-09'),
-(1248, 'Spirit Airlines', 80, 'Airbus', 2306, '2001-01-04');
+(1245, 'Frontier Airlines', 80, 'Airbus', 2306, '2001-01-04');
 
 ALTER TABLE airplane 
 ADD age bigint;
@@ -261,8 +257,7 @@ INSERT INTO airline
 VALUES ('JetBlue', 0, 0, null),
 ('United Airlines', 0, 0, null),
 ('Delta Airlines', 0, 0, null),
-('Frontier Airlines', 0, 0, null),
-('Spirit Airlines', 0, 0, null);
+('Frontier Airlines', 0, 0, null);
 
 -- airline staff
 INSERT INTO airline_staff (username, airline_name, password, first_name, last_name, DOB) VALUES 
