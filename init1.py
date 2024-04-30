@@ -465,7 +465,7 @@ def employeeRegisterAuth():
 	#this is not all the data needed for a cusomter yet!
 	if(not data and airline):
 		session['email'] = username
-		session['admin'] = airline
+		session['admin'] = airline_name
 		session['futureFlightPage'] = 1
 		session['pastFlightPage'] = 1
 
