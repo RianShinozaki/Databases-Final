@@ -1,10 +1,11 @@
 -- Anna Tanaka Viertler & Kai Shinozaki-Conefrey
+
 -- airports
 INSERT INTO airport 
 VALUES ('JFK', 'John F. Kennedy', 'New York City', 'United States', 4, 'both'),
-('PVG', 'Shanghai Pudong International Airport', 'Shanghai', 'China', 4, 'international');
-('LAX', 'Los Angeles International Airport', 'Los Angeles', 'United States', 9, 'both');
-('SFO', 'San Francisco International Airport', 'San Francisco', 'United States', 4, 'both');
+('PVG', 'Shanghai Pudong International Airport', 'Shanghai', 'China', 4, 'international'),
+('LAX', 'Los Angeles International Airport', 'Los Angeles', 'United States', 9, 'both'),
+('SFO', 'San Francisco International Airport', 'San Francisco', 'United States', 4, 'both'),
 ('NRT', 'Narita International Airport', 'Narita', 'Japan', 3, 'both');
 
 
@@ -30,27 +31,27 @@ VALUES ('bob@gmail.com', 9028557134),
 INSERT INTO airplane VALUES 
 (1234, 'JetBlue', 80, 'Boeing', 0001, '2003-04-06', 20),
 (1235, 'JetBlue', 80, 'Textron', 0303, '2002-02-09', 21),
-(1236, 'JetBlue', 80, 'Airbus', 2306, '2001-01-04', 22);
-(1234, 'United Airlines', 80, 'Boeing', 0001, '2003-04-06', 20),
-(1235, 'United Airlines', 80, 'Textron', 0303, '2002-02-09', 21),
-(1236, 'United Airlines', 80, 'Airbus', 2306, '2001-01-04', 22);
-(1234, 'Delta Airlines', 80, 'Boeing', 0001, '2003-04-06', 20),
-(1235, 'Delta Airlines', 80, 'Textron', 0303, '2002-02-09', 21),
-(1236, 'Delta Airlines', 80, 'Airbus', 2306, '2001-01-04', 22);
-(1234, 'Frontier Airlines', 80, 'Boeing', 0001, '2003-04-06', 20),
-(1235, 'Frontier Airlines', 80, 'Textron', 0303, '2002-02-09', 21),
-(1236, 'Frontier Airlines', 80, 'Airbus', 2306, '2001-01-04', 22);
-(1234, 'Spirit Airlines', 80, 'Boeing', 0001, '2003-04-06', 20),
-(1235, 'Spirit Airlines', 80, 'Textron', 0303, '2002-02-09', 21),
-(1236, 'Spirit Airlines', 80, 'Airbus', 2306, '2001-01-04', 22);
+(1236, 'JetBlue', 80, 'Airbus', 2306, '2001-01-04', 22),
+(1237, 'United Airlines', 80, 'Boeing', 0001, '2003-04-06', 20),
+(1238, 'United Airlines', 80, 'Textron', 0303, '2002-02-09', 21),
+(1239, 'United Airlines', 80, 'Airbus', 2306, '2001-01-04', 22),
+(1240, 'Delta Airlines', 80, 'Boeing', 0001, '2003-04-06', 20),
+(1241, 'Delta Airlines', 80, 'Textron', 0303, '2002-02-09', 21),
+(1242, 'Delta Airlines', 80, 'Airbus', 2306, '2001-01-04', 22),
+(1243, 'Frontier Airlines', 80, 'Boeing', 0001, '2003-04-06', 20),
+(1244, 'Frontier Airlines', 80, 'Textron', 0303, '2002-02-09', 21),
+(1245, 'Frontier Airlines', 80, 'Airbus', 2306, '2001-01-04', 22),
+(1246, 'Spirit Airlines', 80, 'Boeing', 0001, '2003-04-06', 20),
+(1247, 'Spirit Airlines', 80, 'Textron', 0303, '2002-02-09', 21),
+(1248, 'Spirit Airlines', 80, 'Airbus', 2306, '2001-01-04', 22);
 
 -- airline
 INSERT INTO airline
-VALUES ('JetBlue', 0, 0, null);
-VALUES ('United Airlines', 0, 0, null);
-VALUES ('Delta Airlines', 0, 0, null);
-VALUES ('Frontier Airlines', 0, 0, null);
-VALUES ('Spirit Airlines', 0, 0, null);
+VALUES ('JetBlue', 0, 0, null),
+('United Airlines', 0, 0, null),
+('Delta Airlines', 0, 0, null),
+('Frontier Airlines', 0, 0, null),
+('Spirit Airlines', 0, 0, null);
 
 -- airline staff
 INSERT INTO airline_staff (username, airline_name, password, first_name, last_name, DOB) VALUES 

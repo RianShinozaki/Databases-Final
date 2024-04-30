@@ -1,5 +1,9 @@
 -- Anna Tanaka Viertler & Kai Shinozaki-Conefrey
 
+DROP DATABASE airplane_project;
+CREATE DATABASE airplane_project;
+USE airplane_project;
+
 CREATE TABLE airport(
 	code 				varchar(3),
 	name 				varchar(50),
