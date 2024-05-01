@@ -60,10 +60,11 @@ def homepage_fields():
 			name = cursor.fetchone()
 			username = name['first_name'] + ' ' + name['last_name']
 
-			query = 'SELECT name, num, depTime, arrTime, ticket_id, status, departureAirport, arrivalAirport FROM lookUpTicket WHERE customer_email = %s AND depTime > CURRENT_TIMESTAMP() ORDER BY depTime;'
+			query = 'SELECT DISTINCT name, num, depTime, arrTime, ticket_id, status, departureAirport, arrivalAirport FROM lookUpTicket WHERE customer_email = %s AND depTime > CURRENT_TIMESTAMP() ORDER BY depTime;'
 			cursor.execute(query, (session.get('email')))
 		
 		myFutureFlights = cursor.fetchall()
+		print(myFutureFlights)
 
 		futureFlightPageNum = len(myFutureFlights)/15
 		sliceBegin = ((int(session.get("futureFlightPage")-1) * 15))
@@ -134,14 +135,16 @@ def lookUpFlight():
 	print(departureDate)
 
 	cursor = conn.cursor()
-	query = 'SELECT name, num, depTime, arrTime, base_price, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
+	query = 'SELECT DISTINCT name, num, depTime, arrTime, base_price, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
 	cursor.execute(query, (departureAirport, arrivalAirport, departureDate))
 	data = cursor.fetchall()
 	print(data)
 	
 	if(returnDate != ''):
-		returnDateObject = datetime.strptime(returnDate, "%Y-%d-%m")
-		departureDateObject = datetime.strptime(departureDate, "%Y-%d-%m")
+		print(returnDate)
+		returnDateObject = datetime.strptime(returnDate, "%Y-%m-%d")
+		departureDateObject = datetime.strptime(departureDate, "%Y-%m-%d")
+		print("yipee")
 		if(returnDateObject <= departureDateObject):
 			error = "Return date cannot come before departure."
 		else:
@@ -347,6 +350,9 @@ def purchaseTicket():
 	numseats = cursor.fetchone()
 	seatsLeft = numseats['num_seats'] - ticket_count['COUNT(ticket_id)']
 	sellPrice = flightInfo[0]['base_price']
+	
+	returnFlightInfo = None
+	returnSeatsLeft = 0
 	returnSellPrice = 0
 
 	if (not seatsLeft):
@@ -422,21 +428,22 @@ def confirmPurchaseTicket():
 	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
 	cursor.execute(query, (ticketid, session.get('selected_flight')[0], session.get('selected_flight')[1], session.get('selected_flight')[2],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
 
-	ticketid = random.randrange(0, 99999)
-	query = 'SELECT * FROM ticket WHERE ticket_id = %s'
-	cursor.execute(query, (ticketid))
-	exist = cursor.fetchall()
-	while exist:
+	if(session.get('selected_return_flight')):
 		ticketid = random.randrange(0, 99999)
+		query = 'SELECT * FROM ticket WHERE ticket_id = %s'
 		cursor.execute(query, (ticketid))
 		exist = cursor.fetchall()
-		
-	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('email'), datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], session.get("returnTicketSellPrice")))
+		while exist:
+			ticketid = random.randrange(0, 99999)
+			cursor.execute(query, (ticketid))
+			exist = cursor.fetchall()
+			
+		query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+		cursor.execute(query, (ticketid, session.get('email'), datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], session.get("returnTicketSellPrice")))
 
-	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (ticketid, session.get('selected_return_flight')[0], session.get('selected_return_flight')[1], session.get('selected_return_flight')[2],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
-	
+		query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+		cursor.execute(query, (ticketid, session.get('selected_return_flight')[0], session.get('selected_return_flight')[1], session.get('selected_return_flight')[2],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
+		
 	cursor.close()
 
 	session.pop('selected_flight')
