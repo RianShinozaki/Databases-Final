@@ -331,14 +331,41 @@ def purchaseTicket():
 	sellPrice = flightInfo[0]['base_price']
 	returnSellPrice = 0
 
-	if not seatsLeft:
+	if (not seatsLeft):
 		fields = homepage_fields()
 		error = "There are no more seats available for " + session.get('selected_flight')[1] + " #" + session.get('selected_flight')[0]
 		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], error = error)
 
-
 	if(seatsLeft <= numseats['num_seats'] * 0.2):
 		sellPrice = float(sellPrice) * 1.25
+
+	if(session.get("selected_return_flight")):
+		query = 'SELECT name, num, depTime, arrTime, base_price FROM lookUpFlight WHERE num = %s AND name = %s AND depTime = %s;'
+		cursor.execute(query, (session.get('selected_return_flight')[0],session.get('selected_return_flight')[1],session.get('selected_return_flight')[2]))
+		returnFlightInfo = cursor.fetchall()
+		error = None
+		query = 'SELECT COUNT(ticket_id) FROM ticket WHERE flight_num = %s AND airline_name = %s AND departure_date_Time = %s; '
+		cursor.execute(query, (session.get('selected_return_flight')[0],session.get('selected_return_flight')[1],session.get('selected_return_flight')[2]))
+		ticket_count = cursor.fetchone()
+
+		query = 'SELECT num_seats FROM airplane, flight WHERE flight_num = %s AND flight.airline_name = %s AND departure_date_Time = %s AND airplane.airplane_id = flight.airplane_id'
+		cursor.execute(query, (session.get('selected_return_flight')[0],session.get('selected_return_flight')[1],session.get('selected_return_flight')[2]))
+		numseats = cursor.fetchone()
+		
+		returnSeatsLeft = numseats['num_seats'] - ticket_count['COUNT(ticket_id)']
+		returnSellPrice = returnFlightInfo[0]['base_price']
+
+		if (not returnSeatsLeft):
+			fields = homepage_fields()
+			error = "There are no more seats available for " + session.get('selected_flight')[1] + " #" + session.get('selected_flight')[0]
+			return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], error = error)
+
+
+		if(returnSeatsLeft <= numseats['num_seats'] * 0.2):
+			returnSellPrice = float(returnSellPrice) * 1.25
+		print(returnSellPrice)
+
+	cursor.close()
 
 	sellPrice = round(sellPrice, 2)
 	returnSellPrice = round(returnSellPrice, 2)
