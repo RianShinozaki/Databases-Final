@@ -31,6 +31,7 @@ nav {
     border-bottom:20px solid var(--palette-2);
     border-bottom-style: 50px;
     padding-left: 60px;
+    z-index: 1;
 }
 div.login {
     float: right;
