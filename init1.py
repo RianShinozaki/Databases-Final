@@ -32,6 +32,15 @@ def homepage_fields():
 	pastFlightPageNum = 1
 	futureFlightPageNum = 1
 
+	if(session.get('selected_return_flight')):
+		session.pop('selected_return_flight')
+	if(session.get('return_flight_data')):
+		session.pop('return_flight_data')
+	if(session.get('ticketSellPrice')):
+		session.pop('ticketSellPrice')
+	if(session.get('returnTicketSellPrice')):
+		session.pop('returnTicketSellPrice')
+
 	if(session.get('email')):
 		cursor = conn.cursor()
 
@@ -239,6 +248,7 @@ def register():
 #Authenticates the register
 @app.route('/customerRegisterAuth', methods=['GET', 'POST'])
 def customerRegisterAuth():
+	
 	username = request.form['email']
 	password = request.form['password']
 	passwordconfirm = request.form['confirmpassword']
@@ -283,6 +293,8 @@ def customerRegisterAuth():
 #Takes you to the ticket purchase screen and saves information from selected flight in question
 @app.route('/selectTicket', methods=['GET', 'POST'])
 def selectTicket():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	flightInfo = request.form['flight_num'].split("_")
 	session['selected_flight'] = flightInfo
 	if(session.get('return_flight_data')):
@@ -295,6 +307,8 @@ def selectTicket():
 
 @app.route('/returnTicketSearch', methods=['GET', 'POST'])
 def returnTicketSearch():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	print(session.get('return_flight_data'))
 	print('hello')
 	return render_template('returnTicketSearch.html', flights = session.get('return_flight_data'))
@@ -305,6 +319,8 @@ def returnTicketSearch():
 #Takes you to the ticket purchase screen and saves information from selected flight in question
 @app.route('/selectReturnTicket', methods=['GET', 'POST'])
 def selectReturnTicket():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	flightInfo = request.form['flight_num'].split("_")
 	session['selected_return_flight'] = flightInfo
 	return redirect('ticketPurchase')
@@ -315,6 +331,8 @@ def selectReturnTicket():
 #Page data for the ticket purchase screen
 @app.route('/ticketPurchase')
 def purchaseTicket():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	query = 'SELECT name, num, depTime, arrTime, base_price FROM lookUpFlight WHERE num = %s AND name = %s AND depTime = %s;'
 	cursor.execute(query, (session.get('selected_flight')[0],session.get('selected_flight')[1],session.get('selected_flight')[2]))
@@ -331,14 +349,41 @@ def purchaseTicket():
 	sellPrice = flightInfo[0]['base_price']
 	returnSellPrice = 0
 
-	if not seatsLeft:
+	if (not seatsLeft):
 		fields = homepage_fields()
 		error = "There are no more seats available for " + session.get('selected_flight')[1] + " #" + session.get('selected_flight')[0]
 		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], error = error)
 
-
 	if(seatsLeft <= numseats['num_seats'] * 0.2):
 		sellPrice = float(sellPrice) * 1.25
+
+	if(session.get("selected_return_flight")):
+		query = 'SELECT name, num, depTime, arrTime, base_price FROM lookUpFlight WHERE num = %s AND name = %s AND depTime = %s;'
+		cursor.execute(query, (session.get('selected_return_flight')[0],session.get('selected_return_flight')[1],session.get('selected_return_flight')[2]))
+		returnFlightInfo = cursor.fetchall()
+		error = None
+		query = 'SELECT COUNT(ticket_id) FROM ticket WHERE flight_num = %s AND airline_name = %s AND departure_date_Time = %s; '
+		cursor.execute(query, (session.get('selected_return_flight')[0],session.get('selected_return_flight')[1],session.get('selected_return_flight')[2]))
+		ticket_count = cursor.fetchone()
+
+		query = 'SELECT num_seats FROM airplane, flight WHERE flight_num = %s AND flight.airline_name = %s AND departure_date_Time = %s AND airplane.airplane_id = flight.airplane_id'
+		cursor.execute(query, (session.get('selected_return_flight')[0],session.get('selected_return_flight')[1],session.get('selected_return_flight')[2]))
+		numseats = cursor.fetchone()
+		
+		returnSeatsLeft = numseats['num_seats'] - ticket_count['COUNT(ticket_id)']
+		returnSellPrice = returnFlightInfo[0]['base_price']
+
+		if (not returnSeatsLeft):
+			fields = homepage_fields()
+			error = "There are no more seats available for " + session.get('selected_flight')[1] + " #" + session.get('selected_flight')[0]
+			return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], error = error)
+
+
+		if(returnSeatsLeft <= numseats['num_seats'] * 0.2):
+			returnSellPrice = float(returnSellPrice) * 1.25
+		print(returnSellPrice)
+
+	cursor.close()
 
 	sellPrice = round(sellPrice, 2)
 	returnSellPrice = round(returnSellPrice, 2)
@@ -354,6 +399,8 @@ def purchaseTicket():
 #When you press "purchase" on the ticket screen
 @app.route('/confirmPurchaseTicket', methods = ['GET', 'POST'])
 def confirmPurchaseTicket():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	# This doesn't guarantee unique tickets, so we should look into that
  
@@ -400,6 +447,8 @@ def confirmPurchaseTicket():
 
 @app.route('/deleteTicket', methods=['GET', 'POST'])
 def deleteTicket():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	#Doesn't check if ticket is more than 24 hours in the future.
 	ticket_id = request.form['ticket_id']
 	cursor = conn.cursor()
@@ -414,6 +463,8 @@ def deleteTicket():
 #Takes you to the ticket review screen and saves flight_num in question
 @app.route('/reviewTicket', methods=['GET', 'POST'])
 def reviewTicket():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	flight_num = request.form['ticket_id']
 	session['selected_flight'] = flight_num
 	return redirect('ticketReview')
@@ -422,6 +473,8 @@ def reviewTicket():
 #Page data for the ticket review screen
 @app.route('/ticketReview')
 def ticketReview():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	query = 'SELECT airline_name, flight_num, departure_date_time, customer_firstname, customer_lastname, departureAirport, arrivalAirport FROM ticket NATURAL JOIN flight NATURAL JOIN lookupflight WHERE ticket_id = %s;'
 	cursor.execute(query, (session.get('selected_flight')))
@@ -433,6 +486,8 @@ def ticketReview():
 #When you press "Submit Review" on the review screen
 @app.route('/confirmReviewTicket', methods = ['GET', 'POST'])
 def confirmReviewTicket():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 
 	#Get more flight info using saved ticket
@@ -508,6 +563,8 @@ def trackSpendingLogic(currentDateTime, beginRangeDateTime):
 
 @app.route('/trackSpendingRefresh', methods=['GET', 'POST'])
 def trackSpendingRefresh():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	begin = request.form['start']
 	end = request.form['end']
 
@@ -519,6 +576,8 @@ def trackSpendingRefresh():
 
 @app.route('/trackSpending', methods=['GET', 'POST'])
 def trackSpending():
+	if(session.get('admin') or not session.get('email')):
+		return redirect('/unauthorized')
 	nowMonthYear = str(datetime.now().year) + "-" + str(datetime.now().month)
 	return trackSpendingLogic(getLastDayOfMonth(nowMonthYear), getSixMonthsAgo(nowMonthYear))
 
@@ -661,12 +720,16 @@ def employeeRegisterAuth():
 
 @app.route('/maintenance')
 def maintenance():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	fields = homepage_fields()
 	return render_template("maintenance.html", username = fields[0], admin = fields[3])
 
 
 @app.route('/maintenanceForm', methods=['GET', 'POST'])
 def maintenanceForm():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	# things to consider:
 	# 	- start date in the past
 	#   - end date before start date
@@ -727,6 +790,8 @@ def maintenanceForm():
 
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	fields = homepage_fields()
 	
 	flight_num = request.form['num']
@@ -759,12 +824,16 @@ def reviews():
 #Page data for the add airplane screen
 @app.route('/addAirplane')
 def addAirplane():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	return render_template('addairplane.html', airline = session.get("admin"))
 
 
 #When you press submit on the airplane add screen
 @app.route('/confirmAddAirplane', methods = ['GET', 'POST'])
 def confirmAddAirplane():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	airplane_id = random.randrange(0, 99999)
 	query = 'SELECT * FROM airplane WHERE airplane_id = %s'
@@ -790,6 +859,8 @@ def confirmAddAirplane():
 #Page data for the ticket purchase screen
 @app.route('/addFlight')
 def addFlight():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	query = 'SELECT code FROM airport WHERE 1;'
 	cursor.execute(query)
@@ -801,7 +872,8 @@ def addFlight():
 # adding a new flight to the system
 @app.route('/confirmAddFlight', methods = ['GET', 'POST'])
 def confirmAddFlight():
-
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	flight_num = random.randrange(0, 999)
 	query = 'SELECT * FROM flight WHERE flight_num = %s AND departure_date_time = %s AND airline_name = %s'
@@ -901,7 +973,8 @@ def confirmAddFlight():
 
 @app.route('/frequency', methods=['GET', 'POST'])
 def frequency():
-	# fields = homepage_fields()
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	query = 'SELECT * FROM ticket WHERE customer_firstname = %s AND customer_lastname = %s AND airline_name = %s'
 	cursor.execute(query, (request.form['first'], request.form['last'], session.get('admin')))
@@ -913,10 +986,14 @@ def frequency():
 
 @app.route('/addAirport', methods = ['GET', 'POST'])
 def addAirport():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	return render_template('/addAirport.html')
 
 @app.route('/newAirport', methods = ['GET', 'POST'])
 def newAirport():	
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	query = 'SELECT * FROM airport WHERE code = %s'
 	cursor.execute(query, (request.form['code'])) 
@@ -937,6 +1014,8 @@ def newAirport():
 
 @app.route('/earnedRevenue', methods = ['GET', 'POST'])
 def earnedRevenue():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	query = 'SELECT SUM(sold_price) FROM ticket NATURAL JOIN ticket_purchase WHERE airline_name = %s AND purchase_date_time BETWEEN %s and %s;'
 
@@ -952,6 +1031,8 @@ def earnedRevenue():
 
 @app.route('/changeStatus', methods=['GET', 'POST'])
 def changeStatus():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	query = 'UPDATE flight SET status = %s WHERE flight_num = %s AND departure_date_time = %s AND airline_name = %s'
 	cursor.execute(query, (request.form['status'], request.form['num'], request.form['departure'], session.get('admin')))
@@ -964,6 +1045,8 @@ def changeStatus():
 
 @app.route('/seeCustomers', methods=['GET', 'POST'])
 def seeCustomers():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	flight_num = request.form['flight_num']
 	departure_date = request.form['depTime']
 	airline = session.get('admin')
@@ -986,6 +1069,8 @@ def seeCustomers():
 
 @app.route('/autoPopulate', methods=['GET', 'POST'])
 def autoPopulate():
+	if(not session.get('admin')):
+		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	query = 'SELECT code FROM airport WHERE 1;'
 	cursor.execute(query)
@@ -1029,6 +1114,10 @@ def autoPopulate():
 	cursor.close()
 	return redirect('/')
 # ===============================================================================================================
+
+@app.route('/unauthorized')
+def unauthorized():
+	return render_template('unauthorized.html')
 
 app.secret_key = '4dafc53ee6f057374339199f1dd06f24a3da2f4625bdce8c55dc1e068c283230'
 #Run the app on localhost port 5000
