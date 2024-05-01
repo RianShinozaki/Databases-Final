@@ -42,7 +42,7 @@ def homepage_fields():
 			name = cursor.fetchone()
 			username = name['first_name'] + ' ' + name['last_name']
 
-			query = 'SELECT name, num, depTime, arrTime, status, departureAirport, arrivalAirport FROM lookUpFlight WHERE name = %s AND depTime > CURRENT_TIMESTAMP() ORDER BY depTime;'
+			query = 'SELECT name, num, depTime, arrTime, status, departureAirport, arrivalAirport FROM lookUpFlight WHERE name = %s AND depTime BETWEEN CURRENT_TIMESTAMP() AND DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY) ORDER BY depTime;'
 			cursor.execute(query, (session.get('admin')))
 			
 		else:
@@ -752,6 +752,7 @@ def confirmAddFlight():
 		cursor.execute(query)
 		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, maintenance=exist_end)
+
 
 	# overlap with another flight
 	query = 'SELECT * FROM flight_arrival NATURAL JOIN flight WHERE airplane_id = %s AND airline_name = %s AND flight_arrival.departure_date_time BETWEEN %s and %s'
