@@ -284,7 +284,11 @@ def purchaseTicket():
 
 	if(seatsLeft <= numseats['num_seats'] * 0.8):
 		sellPrice = float(sellPrice) * 1.25
-
+	
+	if not seatsLeft:
+		fields = homepage_fields()
+		error = "There are no more seats available for " + session.get('selected_flight')[1] + " #" + session.get('selected_flight')[0]
+		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], error = error)
 	sellPrice = round(sellPrice, 2)
 	sellPrice = "%0.2f" % sellPrice
 
