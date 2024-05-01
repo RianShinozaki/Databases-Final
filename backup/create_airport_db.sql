@@ -184,7 +184,8 @@ CREATE TABLE customer_review(
 
     FOREIGN KEY (flight_num) REFERENCES flight(flight_num),
     FOREIGN KEY (departure_date_time) REFERENCES flight(departure_date_time),
-    FOREIGN KEY (airline_name) REFERENCES flight(airline_name)
+    FOREIGN KEY (airline_name) REFERENCES flight(airline_name),
+    FOREIGN KEY (customer_email) REFERENCES customer(customer_email)
 );
 
 
