@@ -356,10 +356,14 @@ def purchaseTicket():
 
 	cursor.close()
 
-	totalSellPrice = round(sellPrice + returnSellPrice, 2)
+	sellPrice = round(sellPrice, 2)
+	returnSellPrice = round(returnSellPrice, 2)
+
+	totalSellPrice = sellPrice + returnSellPrice
 	totalSellPrice = "%0.2f" % totalSellPrice
 
-	session['ticketSellPrice'] = totalSellPrice
+	session['ticketSellPrice'] = sellPrice
+	session['returnTicketSellPrice'] = returnSellPrice
 
 	return render_template('ticketpurchase.html', flightInfo = flightInfo, seatsLeft = seatsLeft, sellPrice = sellPrice, returnFlightInfo = returnFlightInfo, returnSeatsLeft = returnSeatsLeft, returnSellPrice = returnSellPrice, totalSellPrice = totalSellPrice)
 
@@ -386,6 +390,22 @@ def confirmPurchaseTicket():
 	#Insert into ticket
 	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
 	cursor.execute(query, (ticketid, session.get('selected_flight')[0], session.get('selected_flight')[1], session.get('selected_flight')[2],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
+
+	ticketid = random.randrange(0, 99999)
+	query = 'SELECT * FROM ticket WHERE ticket_id = %s'
+	cursor.execute(query, (ticketid))
+	exist = cursor.fetchall()
+	while exist:
+		ticketid = random.randrange(0, 99999)
+		cursor.execute(query, (ticketid))
+		exist = cursor.fetchall()
+		
+	query = 'INSERT INTO ticket_purchase VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+	cursor.execute(query, (ticketid, session.get('email'), datetime.now(), request.form.get('cardtype'), request.form['cardnumber'], request.form['cardfirstname'], request.form['cardlastname'], request.form['cardexpirationdate'], session.get("returnTicketSellPrice")))
+
+	query = 'INSERT INTO ticket VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+	cursor.execute(query, (ticketid, session.get('selected_return_flight')[0], session.get('selected_return_flight')[1], session.get('selected_return_flight')[2],session.get('email'), request.form['firstname'], request.form['lastname'], request.form['birthday']))
+	
 	cursor.close()
 
 	session.pop('selected_flight')
