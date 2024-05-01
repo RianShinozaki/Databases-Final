@@ -42,7 +42,6 @@
 			<a class = "login" href="/maintenance"> MAINTENANCE</a>
 			<a class = "login" href="/earnedRevenue"> VIEW EARNED REVENUE</a>
 			<a class = "login" href="/autoPopulate"> POPULATE TEST FLIGHTS</a>
-
 		</div>
 		{% elif username %}
 		<div class = "search-results">
@@ -50,25 +49,20 @@
 			<a class = "login" href="/trackSpending">TRACK MY SPENDING</a>
 		</div>
 		{% endif %}
-			
+		
 		<div class = "search-results">
 			{% if admin %}
-			<p><strong>Future airline flights </strong></p>
+			<h2>Future Airline Flights</h2>
 		
 			{% elif username %}
-			<p><strong>My future flights</strong></p>
+				 <h2>>My Future Flights</h2>>
 			{% endif %}
 
 			<form action="/changeFutureFlightPage" method="POST">
-				<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
-					<p><strong>Page </strong></p>
-					<input type = "numeric" value = {{futureFlightPage}} name = "futureFlightPage">
-					<p><strong> of </strong></p>
-					<input type = "numeric" value = {{futureFlightPageNum}} name = "futureFlightPages" readonly = true>
-					<input type = "submit" value = refresh >
+				<span style="display:block; margin-right: auto; margin-left: auto; line-height: 20%;">
+					<p><strong>Page <input type = "numeric" value = {{futureFlightPage}} name = "futureFlightPage"> of <input type = "numeric" value = {{futureFlightPageNum}} name = "futureFlightPages" readonly = true> <input type = "submit" value = Refresh ></strong></p>
 				</span>
 			</form>
-			</br></br></br>
 
 			<table>
 				<th>Airline Name</th>
@@ -119,7 +113,6 @@
 			{% else %}
 				<h2>Search for a flight!</h2>
 			{% endif %}
-			
 			<style type="text/css">
 				table, th, td{
 					border: 1px solid black;
@@ -127,7 +120,6 @@
 			</style>
 			
 			<form action="/lookUpFlight" method="POST">
-				
 				<div class = "flight-search-fields">
 					<div class = "flight-search-fields-left">
 						<p>Departure Airport</p>
@@ -146,7 +138,7 @@
 
 				</div>
 				
-				<p class = "center-aligned-button"><input type="submit" value="Search Flights"></p>
+				<p class = "padded-button"><input type="submit" value="Search Flights"></p>
 				
 				
 			</form>
@@ -204,20 +196,15 @@
 		{% if username %}
 		<div class = "search-results">
 			{% if admin %}
-				<p><strong>Past airline flights</strong></p>
+				<h2>Past Airline Flights</h2>
 			{% elif username %}
-				<p><strong>My past flights</strong></p>
+				<h2>My Past Flights</h2>>
 			{% endif %}
 			<form action="/changePastFlightPage" method="POST">
-				<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
-					<p><strong>Page </strong></p>
-					<input type = "numeric" value = {{pastFlightPage}} name = "pastFlightPage">
-					<p><strong> of </strong></p>
-					<input type = "numeric" value = {{pastFlightPageNum}} name = "pastFlightPages" readonly = true>
-					<input type = "submit" value = refresh >
+				<span style="display:block; margin-right: auto; margin-left: auto; line-height: 20%;">
+					<p><strong>Page <input type = "numeric" value = {{pastFlightPage}} name = "pastFlightPage"> of <input type = "numeric" value = {{pastFlightPageNum}} name = "pastFlightPages" readonly = true> <input type = "submit" value = Refresh ></strong></p>
 				</span>
 			</form>
-			</br></br></br>
 			<table>
 				<th>Airline Name</th>
 				<th>Flight Number</th>
@@ -255,8 +242,8 @@
 
 
 		{% if admin %}
-		<div class = "search-results">
-			<p><strong>Frequent Fliers</strong></p>
+		<div class = "flight-search">
+			<h2>Frequent Fliers</h2>
 			<table>
 				<th>Customer Name</th>
 				<th># of Flights</th>
