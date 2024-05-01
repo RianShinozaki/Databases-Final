@@ -62,9 +62,9 @@
 			<form action="/changeFutureFlightPage" method="POST">
 				<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
 					<p><strong>Page </strong></p>
-					<input type = "numeric" value = {{futureFlightPage}} name = "futureFlightPage">
+					<input type = "number" value = {{futureFlightPage}} name = "futureFlightPage">
 					<p><strong> of </strong></p>
-					<input type = "numeric" value = {{futureFlightPageNum}} name = "futureFlightPages" readonly = true>
+					<input type = "number" value = {{futureFlightPageNum}} name = "futureFlightPages" readonly = true>
 					<input type = "submit" value = refresh >
 				</span>
 			</form>
@@ -211,9 +211,9 @@
 			<form action="/changePastFlightPage" method="POST">
 				<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
 					<p><strong>Page </strong></p>
-					<input type = "numeric" value = {{pastFlightPage}} name = "pastFlightPage">
+					<input type = "number" value = {{pastFlightPage}} name = "pastFlightPage">
 					<p><strong> of </strong></p>
-					<input type = "numeric" value = {{pastFlightPageNum}} name = "pastFlightPages" readonly = true>
+					<input type = "number" value = {{pastFlightPageNum}} name = "pastFlightPages" readonly = true>
 					<input type = "submit" value = refresh >
 				</span>
 			</form>

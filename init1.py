@@ -933,9 +933,6 @@ def confirmAddFlight():
 			error = request.form['arrivalAirport'] + " only hosts international flights!"
 			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
 
-
-
-
 	# overlap with maintenance
 	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN start_date and end_date'
 	cursor.execute(query, (request.form['airplane_id'], session.get('admin'), request.form['departure_date_time']))
