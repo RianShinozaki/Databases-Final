@@ -419,7 +419,7 @@ def reviewTicket():
 @app.route('/ticketReview')
 def ticketReview():
 	cursor = conn.cursor()
-	query = 'SELECT airline_name, flight_num, departure_date_time, customer_firstname, customer_lastname FROM ticket NATURAL JOIN flight WHERE ticket_id = %s;'
+	query = 'SELECT airline_name, flight_num, departure_date_time, customer_firstname, customer_lastname, departureAirport, arrivalAirport FROM ticket NATURAL JOIN flight NATURAL JOIN lookupflight WHERE ticket_id = %s;'
 	cursor.execute(query, (session.get('selected_flight')))
 	flightInfo = cursor.fetchall()
 	cursor.close()
@@ -729,15 +729,23 @@ def reviews():
 	departure = request.form['depTime']
 
 	cursor = conn.cursor()
+	query = 'SELECT departureAirport, arrivalAirport FROM lookupflight WHERE num = %s AND depTime = %s AND name = %s'
+	cursor.execute(query, (flight_num, departure, session.get('admin')))
+	flight = cursor.fetchone()
+
 	query = 'SELECT customer_email, rating, comment FROM customer_review NATURAL JOIN flight WHERE departure_date_time = %s AND flight_num = %s AND airline_name = %s'
 	cursor.execute(query, (departure, flight_num, session.get('admin')))
-
 	data = cursor.fetchall()
-	cursor.close()
+
 	error = None
 	if(data):
-		return render_template('reviews.html', username = fields[0], admin = fields[3], num=flight_num, date=departure, flights=data)
+		query = 'SELECT round(avg(rating), 1) as average FROM customer_review;'
+		cursor.execute(query)
+		avg = cursor.fetchone()
+		cursor.close()
+		return render_template('reviews.html', username = fields[0], admin = fields[3], num=flight_num, departure=departure, flights=data, depArr=flight, avg=avg['average'])
 	else:
+		cursor.close()
 		error = "There are no reviews for this flight yet."
 		return render_template('index.html', username = fields[0], myflights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], error = error)
 
@@ -799,7 +807,39 @@ def confirmAddFlight():
 		flight_num = random.randrange(0, 999)
 		cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin')))
 		exist = cursor.fetchall()
+
+	query = 'SELECT code FROM airport;'
+	cursor.execute(query)
+	airports = cursor.fetchall()
 	
+	# enforce domestic/international
+	query = 'SELECT * FROM airport WHERE code = %s'
+	cursor.execute(query, (request.form['departureAirport']))
+	daInfo = cursor.fetchone()
+
+	query = 'SELECT * FROM airport WHERE code = %s'
+	cursor.execute(query, (request.form['arrivalAirport']))
+	aaInfo = cursor.fetchone()
+
+	if daInfo['type'] == 'domestic':
+		if daInfo['country'] != aaInfo['country']:
+			error = request.form['departureAirport'] + " only hosts domestic flights!"
+			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
+	elif aaInfo['type'] == 'domestic':
+		if daInfo['country'] != aaInfo['country']:
+			error = request.form['arrivalAirport'] + " only hosts domestic flights!"
+			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
+	elif daInfo['type'] == 'international':
+		if daInfo['country'] == aaInfo['country']:
+			error = request.form['departureAirport'] + " only hosts international flights!"
+			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
+	elif aaInfo['type'] == 'international':
+		if daInfo['country'] == aaInfo['country']:
+			error = request.form['arrivalAirport'] + " only hosts international flights!"
+			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
+
+
+
 
 	# overlap with maintenance
 	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN start_date and end_date'
@@ -808,9 +848,6 @@ def confirmAddFlight():
 
 	if exist_start:
 		error = "There's maintenance schedueld for Plane#" + str(request.form['airplane_id']) + " during the following time periods:"
-		query = 'SELECT code FROM airport WHERE 1;'
-		cursor.execute(query)
-		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, maintenance=exist_start)
 	
 	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN start_date and end_date'
@@ -819,9 +856,6 @@ def confirmAddFlight():
 
 	if exist_end:
 		error = "There's maintenance schedueld for Plane#" + str(request.form['airplane_id']) + " during the following time periods:"
-		query = 'SELECT code FROM airport WHERE 1;'
-		cursor.execute(query)
-		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, maintenance=exist_end)
 
 
@@ -830,14 +864,9 @@ def confirmAddFlight():
 	cursor.execute(query, (request.form['airplane_id'], session.get('admin'), request.form['departure_date_time'], request.form['arrival_date_time']))
 	exist_start = cursor.fetchall()
 
-	print(exist_start)
-
 	if exist_start:
 		print(exist_start)
 		error = "Plane#" + str(request.form['airplane_id']) + " is scheduled for the following flights during that time:"
-		query = 'SELECT code FROM airport WHERE 1;'
-		cursor.execute(query)
-		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, flight=exist_start)
 	
 	query = 'SELECT * FROM flight_arrival NATURAL JOIN flight WHERE airplane_id = %s AND airline_name = %s AND flight_arrival.arrival_date_time BETWEEN %s and %s'
@@ -846,10 +875,8 @@ def confirmAddFlight():
 
 	if exist_end:
 		error = "Plane#" + str(request.form['airplane_id']) + " is scheduled for the following flights during that time:"
-		query = 'SELECT code FROM airport WHERE 1;'
-		cursor.execute(query)
-		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, flight=exist_end)
+
 
 
 	#Insert into airplane
@@ -998,102 +1025,6 @@ def autoPopulate():
 	cursor.close()
 	return redirect('/')
 # ===============================================================================================================
-"""
-#Define route for login
-@app.route('/login')
-def login():
-	return render_template('login.html')
-
-#Define route for register
-@app.route('/register')
-def register():
-	return render_template('register.html')
-
-#Authenticates the login
-@app.route('/loginAuth', methods=['GET', 'POST'])
-def loginAuth():
-	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
-
-	#cursor used to send queries
-	cursor = conn.cursor()
-	#executes query
-	query = 'SELECT * FROM user WHERE username = %s and password = %s'
-	cursor.execute(query, (username, password))
-	#stores the results in a variable
-	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
-	cursor.close()
-	error = None
-	if(data):
-		#creates a session for the the user
-		#session is a built in
-		session['username'] = username
-		return redirect(url_for('home'))
-	else:
-		#returns an error message to the html page
-		error = 'Invalid login or username'
-		return render_template('login.html', error=error)
-
-#Authenticates the register
-@app.route('/registerAuth', methods=['GET', 'POST'])
-def registerAuth():
-	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
-
-	#cursor used to send queries
-	cursor = conn.cursor()
-	#executes query
-	query = 'SELECT * FROM user WHERE username = %s'
-	cursor.execute(query, (username))
-	#stores the results in a variable
-	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
-	error = None
-	if(data):
-		#If the previous query returns data, then user exists
-		error = "This user already exists"
-		return render_template('register.html', error = error)
-	else:
-		ins = 'INSERT INTO user VALUES(%s, %s)'
-		cursor.execute(ins, (username, password))
-		conn.commit()
-		cursor.close()
-		return render_template('index.html')
-
-@app.route('/home')
-def home():
-    
-    username = session['username']
-    cursor = conn.cursor();
-    query = 'SELECT ts, blog_post FROM blog WHERE username = %s ORDER BY ts DESC'
-    cursor.execute(query, (username))
-    data1 = cursor.fetchall() 
-    for each in data1:
-        print(each['blog_post'])
-    cursor.close()
-    return render_template('home.html', username=username, posts=data1)
-
-		
-@app.route('/post', methods=['GET', 'POST'])
-def post():
-	username = session['username']
-	cursor = conn.cursor();
-	blog = request.form['blog']
-	query = 'INSERT INTO blog (blog_post, username) VALUES(%s, %s)'
-	cursor.execute(query, (blog, username))
-	conn.commit()
-	cursor.close()
-	return redirect(url_for('home'))
-
-@app.route('/logout')
-def logout():
-	session.pop('username')
-	return redirect('/')
-"""
-
 
 app.secret_key = '4dafc53ee6f057374339199f1dd06f24a3da2f4625bdce8c55dc1e068c283230'
 #Run the app on localhost port 5000
