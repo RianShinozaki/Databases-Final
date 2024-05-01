@@ -132,3 +132,9 @@ table, th, td{
     margin:auto;
     border: 1px solid black;
 }
+img.airline-logo {
+    object-fit: contain;
+    width:30%;
+    height: 70%;
+    float:inline-start
+}
