@@ -808,8 +808,8 @@ def reviews():
 
 	error = None
 	if(data):
-		query = 'SELECT round(avg(rating), 1) as average FROM customer_review;'
-		cursor.execute(query)
+		query = 'SELECT round(avg(rating), 1) as average FROM customer_review WHERE flight_num = %s AND departure_date_time = %s AND airline_name = %s;'
+		cursor.execute(query, (flight_num, departure, session.get('admin')))
 		avg = cursor.fetchone()
 		cursor.close()
 		return render_template('reviews.html', username = fields[0], admin = fields[3], num=flight_num, departure=departure, flights=data, depArr=flight, avg=avg['average'])
@@ -836,8 +836,8 @@ def confirmAddAirplane():
 		return redirect('/unauthorized')
 	cursor = conn.cursor()
 	airplane_id = random.randrange(0, 99999)
-	query = 'SELECT * FROM airplane WHERE airplane_id = %s'
-	cursor.execute(query, (airplane_id))
+	query = 'SELECT * FROM airplane WHERE airplane_id = %s AND airline_name = %s'
+	cursor.execute(query, (airplane_id, session.get('admin')))
 	exist = cursor.fetchall()
 	while exist:
 		airplane_id = random.randrange(0, 99999)
@@ -849,18 +849,11 @@ def confirmAddAirplane():
 	if(int(request.form['num_seats']) <= 0):
 		error = "Invalid number of seats."
 
-	#Check for duplicate manufacturing company and model number
-	query = 'SELECT * FROM airplane WHERE manufacturing_company = %s AND model_num = %s'
-	cursor.execute(query, (request.form['manufacturing_company'], request.form['model_num']))
-	exist = cursor.fetchall()
-	if exist:
-		error = "Model by manufacturing company already exists."
-
 	if(error == None):
 		#Insert into airplane
 		query = 'INSERT INTO airplane VALUES (%s, %s, %s, %s, %s, %s, %s)'
 		cursor.execute(query, (airplane_id, session.get('admin'), request.form['num_seats'], request.form['manufacturing_company'], request.form['model_num'], request.form['manufacturing_date'], 0))
-		query = 'UPDATE airplane SET age = (DATEDIFF(NOW(), manufacturing_date)) / 365 WHERE airline_name = %s AND model_num = %s'
+		query = 'UPDATE airplane SET age = (DATEDIFF(NOW(), manufacturing_date)) / 365 WHERE airline_name = %s AND airplane_id = %s'
 		cursor.execute (query, (session.get('admin'), request.form['model_num']))
 		cursor.close()
 
@@ -932,6 +925,9 @@ def confirmAddFlight():
 		if daInfo['country'] == aaInfo['country']:
 			error = request.form['arrivalAirport'] + " only hosts international flights!"
 			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
+
+
+
 
 	# overlap with maintenance
 	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN start_date and end_date'
