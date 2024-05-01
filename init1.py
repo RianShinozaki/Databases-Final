@@ -736,7 +736,39 @@ def confirmAddFlight():
 		flight_num = random.randrange(0, 999)
 		cursor.execute(query, (flight_num, request.form['departure_date_time'], session.get('admin')))
 		exist = cursor.fetchall()
+
+	query = 'SELECT code FROM airport;'
+	cursor.execute(query)
+	airports = cursor.fetchall()
 	
+	# enforce domestic/international
+	query = 'SELECT * FROM airport WHERE code = %s'
+	cursor.execute(query, (request.form['departureAirport']))
+	daInfo = cursor.fetchone()
+
+	query = 'SELECT * FROM airport WHERE code = %s'
+	cursor.execute(query, (request.form['arrivalAirport']))
+	aaInfo = cursor.fetchone()
+
+	if daInfo['type'] == 'domestic':
+		if daInfo['country'] != aaInfo['country']:
+			error = request.form['departureAirport'] + " only hosts domestic flights!"
+			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
+	elif aaInfo['type'] == 'domestic':
+		if daInfo['country'] != aaInfo['country']:
+			error = request.form['arrivalAirport'] + " only hosts domestic flights!"
+			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
+	elif daInfo['type'] == 'international':
+		if daInfo['country'] == aaInfo['country']:
+			error = request.form['departureAirport'] + " only hosts international flights!"
+			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
+	elif aaInfo['type'] == 'international':
+		if daInfo['country'] == aaInfo['country']:
+			error = request.form['arrivalAirport'] + " only hosts international flights!"
+			return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error)
+
+
+
 
 	# overlap with maintenance
 	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN start_date and end_date'
@@ -745,9 +777,6 @@ def confirmAddFlight():
 
 	if exist_start:
 		error = "There's maintenance schedueld for Plane#" + str(request.form['airplane_id']) + " during the following time periods:"
-		query = 'SELECT code FROM airport WHERE 1;'
-		cursor.execute(query)
-		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, maintenance=exist_start)
 	
 	query = 'SELECT * FROM maintenance WHERE airplane_id = %s AND airline_name = %s AND %s BETWEEN start_date and end_date'
@@ -756,9 +785,6 @@ def confirmAddFlight():
 
 	if exist_end:
 		error = "There's maintenance schedueld for Plane#" + str(request.form['airplane_id']) + " during the following time periods:"
-		query = 'SELECT code FROM airport WHERE 1;'
-		cursor.execute(query)
-		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, maintenance=exist_end)
 
 
@@ -770,9 +796,6 @@ def confirmAddFlight():
 	if exist_start:
 		print(exist_start)
 		error = "Plane#" + str(request.form['airplane_id']) + " is scheduled for the following flights during that time:"
-		query = 'SELECT code FROM airport WHERE 1;'
-		cursor.execute(query)
-		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, flight=exist_start)
 	
 	query = 'SELECT * FROM flight_arrival NATURAL JOIN flight WHERE airplane_id = %s AND airline_name = %s AND flight_arrival.arrival_date_time BETWEEN %s and %s'
@@ -781,10 +804,8 @@ def confirmAddFlight():
 
 	if exist_end:
 		error = "Plane#" + str(request.form['airplane_id']) + " is scheduled for the following flights during that time:"
-		query = 'SELECT code FROM airport WHERE 1;'
-		cursor.execute(query)
-		airports = cursor.fetchall()
 		return render_template('addflight.html', airports = airports, airline = session.get("admin"), error=error, flight=exist_end)
+
 
 
 	#Insert into airplane
