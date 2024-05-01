@@ -843,16 +843,31 @@ def confirmAddAirplane():
 		airplane_id = random.randrange(0, 99999)
 		cursor.execute(query, (airplane_id))
 		exist = cursor.fetchall()
+	error = None
 
-	#Insert into airplane
-	query = 'INSERT INTO airplane VALUES (%s, %s, %s, %s, %s, %s, %s)'
-	cursor.execute(query, (airplane_id, session.get('admin'), request.form['num_seats'], request.form['manufacturing_company'], request.form['model_num'], request.form['manufacturing_date'], 0))
-	query = 'UPDATE airplane SET age = (DATEDIFF(NOW(), manufacturing_date)) / 365 WHERE airline_name = %s AND model_num = %s'
-	cursor.execute (query, (session.get('admin'), request.form['model_num']))
-	cursor.close()
+	#Check for invalid numbers of seats
+	if(int(request.form['num_seats']) <= 0):
+		error = "Invalid number of seats."
 
-	return redirect('/')
+	#Check for duplicate manufacturing company and model number
+	query = 'SELECT * FROM airplane WHERE manufacturing_company = %s AND model_num = %s'
+	cursor.execute(query, (request.form['manufacturing_company'], request.form['model_num']))
+	exist = cursor.fetchall()
+	if exist:
+		error = "Model by manufacturing company already exists."
 
+	if(error == None):
+		#Insert into airplane
+		query = 'INSERT INTO airplane VALUES (%s, %s, %s, %s, %s, %s, %s)'
+		cursor.execute(query, (airplane_id, session.get('admin'), request.form['num_seats'], request.form['manufacturing_company'], request.form['model_num'], request.form['manufacturing_date'], 0))
+		query = 'UPDATE airplane SET age = (DATEDIFF(NOW(), manufacturing_date)) / 365 WHERE airline_name = %s AND model_num = %s'
+		cursor.execute (query, (session.get('admin'), request.form['model_num']))
+		cursor.close()
+
+		return redirect('/')
+	else:
+		cursor.close()
+		return render_template('addairplane.html', airline = session.get("admin"), error = error)
 # ---------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------
 
@@ -866,7 +881,11 @@ def addFlight():
 	cursor.execute(query)
 	airports = cursor.fetchall()
 
-	return render_template('addflight.html', airports = airports, airline = session.get("admin"))
+	query = 'SELECT airplane_id FROM airplane WHERE airline_name = %s;'
+	cursor.execute(query, (session.get('admin')))
+	airplanes = cursor.fetchall()
+
+	return render_template('addflight.html', airports = airports, airline = session.get("admin"), airplanes = airplanes)
 
 
 # adding a new flight to the system

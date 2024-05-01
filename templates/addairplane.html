@@ -19,6 +19,9 @@
     <main>
         <div class = 'input-form-elements'>
             <h2>Input new airplane information for {{airline}}</h2>
+            {% if error %}
+                <p class="error"><strong>Error:</strong> {{error}}</p>
+            {% endif %}
             <form action="/confirmAddAirplane" method="POST">
                 <input type="number" name = "num_seats" placeholder="Number of Seats" inputmode = numeric required /> </br>
                 <input type="text" name = "manufacturing_company" placeholder="Manufacturing Company" required/> </br>
