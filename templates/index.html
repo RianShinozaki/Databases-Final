@@ -12,18 +12,15 @@
 <body>
 	<nav>
 		<h1 class = "navigator-header">FlaskFlights</h2>
+		{% if admin %}
+			<img src="static/imgs/{{admin}}.png" class = "airline-logo">
+		{% endif %}
 		<div class = "login">
 		{% if not username %}
 			<a class = "login" href="/login">LOGIN</a>
 			<a class = "login" href="/register">REGISTER</a>
 		{% endif %}
 		{% if username %}
-			{% if admin %}
-				<img src="static/imgs/{{admin}}.png" width="10%" height="10%"  >
-				<title>FlaskFlights</title>
-			{% else %}
-				<title>FlaskFlights</title>
-			{% endif %}
 			<a class = "login" href="/logout">LOGOUT</a>
 		{% endif %}
 		</div>
