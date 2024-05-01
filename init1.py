@@ -119,11 +119,38 @@ def lookUpFlight():
 	departureAirport = request.form['departureAirport']
 	arrivalAirport = request.form['arrivalAirport']
 	departureDate = request.form['departureDate']
+	returnDate = request.form['returnDate']
+
+	print(returnDate)
+	print(departureDate)
 
 	cursor = conn.cursor()
 	query = 'SELECT name, num, depTime, arrTime, base_price, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
 	cursor.execute(query, (departureAirport, arrivalAirport, departureDate))
 	data = cursor.fetchall()
+	print(data)
+	
+	if(returnDate != ''):
+		returnDateObject = datetime.strptime(returnDate, "%Y-%d-%m")
+		departureDateObject = datetime.strptime(departureDate, "%Y-%d-%m")
+		if(returnDateObject <= departureDateObject):
+			error = "Return date cannot come before departure."
+		else:
+			query = 'SELECT name, num, depTime, arrTime, base_price, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
+			cursor.execute(query, (arrivalAirport, departureAirport, returnDate))
+			returnData = cursor.fetchall()
+			print(returnData)
+			for theData in returnData:
+				theData['depTime'] = str(theData['depTime'])
+				print(theData)
+				print("wahoo")
+
+			print(returnData)
+
+			if(not returnData):
+				error = "No return flights match those parameters at this time."
+			else:
+				session['return_flight_data'] = returnData
 
 	if(session.get('admin')):
 		query = 'SELECT name, num, depTime, arrTime, base_price, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s AND name = %s'
@@ -131,12 +158,13 @@ def lookUpFlight():
 		data = cursor.fetchall()
 
 	error = None
-	if(data):
+	if(not data): 
+		error = "No flights match those parameters at this time."
+	if(error == None):
 		cursor.close()
 		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = data)
 	else:
-		error = "No flights match those parameters at this time."
-		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = data, error=error)
+		return render_template('index.html', username = fields[0], myFutureFlights = fields[1], myPastFlights = fields[2], admin = fields[3], frequentFliers=fields[4], flights = None, error=error)
 
 # ---------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------
@@ -252,11 +280,33 @@ def customerRegisterAuth():
 # ---------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------
 
-#Takes you to the ticket purchase screen and saves flight_num in question
+#Takes you to the ticket purchase screen and saves information from selected flight in question
 @app.route('/selectTicket', methods=['GET', 'POST'])
 def selectTicket():
 	flightInfo = request.form['flight_num'].split("_")
 	session['selected_flight'] = flightInfo
+	if(session.get('return_flight_data')):
+		return redirect('returnTicketSearch')
+	else:
+		return redirect('ticketPurchase')
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
+@app.route('/returnTicketSearch', methods=['GET', 'POST'])
+def returnTicketSearch():
+	print(session.get('return_flight_data'))
+	print('hello')
+	return render_template('returnTicketSearch.html', flights = session.get('return_flight_data'))
+
+# ---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
+#Takes you to the ticket purchase screen and saves information from selected flight in question
+@app.route('/selectReturnTicket', methods=['GET', 'POST'])
+def selectReturnTicket():
+	flightInfo = request.form['flight_num'].split("_")
+	session['selected_return_flight'] = flightInfo
 	return redirect('ticketPurchase')
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -279,18 +329,39 @@ def purchaseTicket():
 	numseats = cursor.fetchone()
 	seatsLeft = numseats['num_seats'] - ticket_count['COUNT(ticket_id)']
 	sellPrice = flightInfo[0]['base_price']
+	returnSellPrice = 0
+
+	if(seatsLeft <= numseats['num_seats'] * 0.2):
+		sellPrice = float(sellPrice) * 1.25
+
+	if(session.get("selected_return_flight")):
+		query = 'SELECT name, num, depTime, arrTime, base_price FROM lookUpFlight WHERE num = %s AND name = %s AND depTime = %s;'
+		cursor.execute(query, (session.get('selected_return_flight')[0],session.get('selected_return_flight')[1],session.get('selected_return_flight')[2]))
+		returnFlightInfo = cursor.fetchall()
+		error = None
+		query = 'SELECT COUNT(ticket_id) FROM ticket WHERE flight_num = %s AND airline_name = %s AND departure_date_Time = %s; '
+		cursor.execute(query, (session.get('selected_return_flight')[0],session.get('selected_return_flight')[1],session.get('selected_return_flight')[2]))
+		ticket_count = cursor.fetchone()
+
+		query = 'SELECT num_seats FROM airplane, flight WHERE flight_num = %s AND flight.airline_name = %s AND departure_date_Time = %s AND airplane.airplane_id = flight.airplane_id'
+		cursor.execute(query, (session.get('selected_return_flight')[0],session.get('selected_return_flight')[1],session.get('selected_return_flight')[2]))
+		numseats = cursor.fetchone()
+		
+		returnSeatsLeft = numseats['num_seats'] - ticket_count['COUNT(ticket_id)']
+		returnSellPrice = returnFlightInfo[0]['base_price']
+
+		if(returnSeatsLeft <= numseats['num_seats'] * 0.2):
+			returnSellPrice = float(returnSellPrice) * 1.25
+		print(returnSellPrice)
 
 	cursor.close()
 
-	if(seatsLeft <= numseats['num_seats'] * 0.8):
-		sellPrice = float(sellPrice) * 1.25
+	totalSellPrice = round(sellPrice + returnSellPrice, 2)
+	totalSellPrice = "%0.2f" % totalSellPrice
 
-	sellPrice = round(sellPrice, 2)
-	sellPrice = "%0.2f" % sellPrice
+	session['ticketSellPrice'] = totalSellPrice
 
-	session['ticketSellPrice'] = sellPrice
-
-	return render_template('ticketpurchase.html', flightInfo = flightInfo, seatsLeft = seatsLeft, sellPrice = sellPrice)
+	return render_template('ticketpurchase.html', flightInfo = flightInfo, seatsLeft = seatsLeft, sellPrice = sellPrice, returnFlightInfo = returnFlightInfo, returnSeatsLeft = returnSeatsLeft, returnSellPrice = returnSellPrice, totalSellPrice = totalSellPrice)
 
 #When you press "purchase" on the ticket screen
 @app.route('/confirmPurchaseTicket', methods = ['GET', 'POST'])
@@ -1024,7 +1095,7 @@ def logout():
 """
 
 
-app.secret_key = 'some key that you will never guess'
+app.secret_key = '4dafc53ee6f057374339199f1dd06f24a3da2f4625bdce8c55dc1e068c283230'
 #Run the app on localhost port 5000
 #debug = True -> you don't have to restart flask
 #for changes to go through, TURN OFF FOR PRODUCTION
