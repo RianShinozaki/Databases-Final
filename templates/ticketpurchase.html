@@ -36,6 +36,24 @@
                     </tr>
                 {% endfor %}
             </table></br>
+            {% if returnFlightInfo%}
+            <table>
+                <th>Airline Name</th>
+                <th>Flight Number</th>
+                <th>Departure Time</th>
+                <th>Arrival Time</th>
+                <th>Seats Remaining</th>
+                {% for flight in returnFlightInfo %}
+                    <tr>
+                        <td>{{flight['name']}}</td>
+                        <td>{{flight['num']}}</td>
+                        <td>{{flight['depTime']}}</td>
+                        <td>{{flight['arrTime']}}</td>
+                        <td>{{returnSeatsLeft}}</td>
+                    </tr>
+                {% endfor %}
+            </table></br>
+            {%endif%}
 
             <form action="/confirmPurchaseTicket" method="POST">
                 <input type="text" name = "firstname" placeholder="First Name" required/> </br>
@@ -46,12 +64,12 @@
                     <option value="credit" selected>Credit Card</option>
                     <option value="debit">Debit Card</option>
                 </select>
-                <h3>Your total price will be: ${{sellPrice}}</h3>
+                <h3>Your total price will be: ${{totalSellPrice}}</h3>
                 <input type="text" name = "cardnumber" placeholder="Card Number" required/> </br>
                 <input type="text" name = "cardfirstname" placeholder="Cardholder First Name" required/> </br>
                 <input type="text" name = "cardlastname" placeholder="Cardholder Last Name" required/> </br>
                 <input type="month" name = "cardexpirationdate" placeholder="Expiration Date" required/> </br>
-                <input type="submit" value = Purchase /></br>
+                <input type="submit" value = Purchase /></br></br>
             </form>
         </div>
     </main>          

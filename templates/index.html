@@ -134,15 +134,17 @@
 				<div class = "flight-search-fields">
 					<div class = "flight-search-fields-left">
 						<p>Departure Airport</p>
-						<p><input maxlength="255" name="departureAirport" placeholder="Departure Airport" size="30" type="search"></p>
+						<p><input maxlength="255" name="departureAirport" placeholder="Departure Airport" size="30" type="search" required></p>
 						<p>Departure Date</p>
-						<p><input maxlength="255" name="departureDate" placeholder="Departure Date" size="30" type="date"></p>
+						<p><input maxlength="255" name="departureDate" placeholder="Departure Date" size="30" type="date" required></p>
 					</div>
 					<div class = "flight-search-fields-right">
 						<p>Arrival Airport</p>
-						<p><input maxlength="255" name="arrivalAirport" placeholder="Arrival Airport" size="30" type="search"></p>
-						<p>Return Date</p>
-						<p><input maxlength="255" name="returnDate" placeholder="Return Date" size="30" type="date"></p>
+						<p><input maxlength="255" name="arrivalAirport" placeholder="Arrival Airport" size="30" type="search" required></p>
+						{% if not admin %}
+							<p>Return Date</p>
+							<p><input maxlength="255" name="returnDate" placeholder="Return Date" size="30" type="date"></p>
+						{% endif %}
 					</div>
 
 				</div>
@@ -279,6 +281,6 @@
 		</div>
 		{% endif %}
 	</main>
-</body>
+</body></br>
 
 </html>

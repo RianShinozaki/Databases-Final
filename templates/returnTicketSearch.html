@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="./static/style.css"/>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<title>FlaskFlights</title>
+
+</head>
+<body>
+	<nav>
+		<h1 class = "navigator-header">FlaskFlights</h2>
+		<div class = "login">
+			<a class = "login" href="/home">HOME</a>
+		</div>
+	</nav>
+	<main>
+		<div class = "search-results">
+            <h2>Select a return flight: </h2>
+			<table>
+				<th>Airline Name</th>
+				<th>Flight Number</th>
+				<th>Departure Time</th>
+				<th>Arrival Time</th>
+				<th>Starting Price</th>
+				<th>Status</th>
+				{% if username %}
+					{% if not admin %}
+						<th>Action</th>
+					{% elif admin %}
+						<th>Customers</th>
+					{% endif %}
+				{% endif %}
+			
+			{% for flight in flights %}
+				<tr>
+					<td>{{flight['name']}}</td>
+					<td>{{flight['num']}}</td>
+					<td>{{flight['depTime']}}</td>
+					<td>{{flight['arrTime']}}</td>
+					<td>{{flight['base_price']}}</td>
+					<td>{{flight['status']}}</td>
+                    <td>
+                        <form action="/selectReturnTicket" method="POST">
+                            <p class = "center-aligned-button"><button type="submit" name = "flight_num" value = "{{flight['num']}}_{{flight['name']}}_{{flight['depTime']}}"></button></p>
+                        </form>
+                    </td>
+				</tr>
+			{% endfor %}
+			</table>
+		</div>
+	</main>
+</body></br>
+
+</html>
