@@ -107,10 +107,10 @@ last year.
 
 ### Other Things to Fix:
 1. ✅ `Airplane Ages`: make sure that airplane ages are calculated based on today's date
-2. ⛔️ `Return Flight Parameters`: account for a return flight when searching for a flight
+2. ✅ `Return Flight Parameters`: account for a return flight when searching for a flight
 3. ✅ `Ticket Prices` : calculate new prices based on tickets already sold
 4. ❎ `Invalid Dates` : make sure that the dates don't contradict each other or the context
 5. ✅ `Maintenance Overlap` : make sure that a plane can't be assigned to a flight during maintenance
 6. ✅ `Schedule Multiple Flights with the same Airplane` : no good
 7. ✅ `Enforcing Domestic & International Flights` : wtf
-8. ⛔️ `Flight is Full` : how are we going to show if a flight is full? Remove buy button?
+8. ✅ `Flight is Full` : how are we going to show if a flight is full? Remove buy button?
