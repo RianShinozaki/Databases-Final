@@ -59,12 +59,8 @@
 			{% endif %}
 
 			<form action="/changeFutureFlightPage" method="POST">
-				<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
-					<p><strong>Page </strong></p>
-					<input type = "number" value = {{futureFlightPage}} name = "futureFlightPage">
-					<p><strong> of </strong></p>
-					<input type = "number" value = {{futureFlightPageNum}} name = "futureFlightPages" readonly = true>
-					<input type = "submit" value = refresh >
+				<span style="display:block; margin-right: auto; margin-left: auto; line-height: 20%;">
+					<p><strong>Page <input type = "numeric" value = {{futureFlightPage}} name = "futureFlightPage"> of <input type = "numeric" value = {{futureFlightPageNum}} name = "futureFlightPages" readonly = true> <input type = "submit" value = Refresh ></strong></p>
 				</span>
 			</form>
 
@@ -205,12 +201,8 @@
 				<h2>My Past Flights</h2>
 			{% endif %}
 			<form action="/changePastFlightPage" method="POST">
-				<span style="display:flex; float:left; vertical-align: text-bottom; line-height: 10%;">
-					<p><strong>Page </strong></p>
-					<input type = "number" value = {{pastFlightPage}} name = "pastFlightPage">
-					<p><strong> of </strong></p>
-					<input type = "number" value = {{pastFlightPageNum}} name = "pastFlightPages" readonly = true>
-					<input type = "submit" value = refresh >
+				<span style="display:block; margin-right: auto; margin-left: auto; line-height: 20%;">
+					<p><strong>Page <input type = "numeric" value = {{pastFlightPage}} name = "pastFlightPage"> of <input type = "numeric" value = {{pastFlightPageNum}} name = "pastFlightPages" readonly = true> <input type = "submit" value = Refresh ></strong></p>
 				</span>
 			</form>
 			<table>
