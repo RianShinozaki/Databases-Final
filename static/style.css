@@ -132,3 +132,12 @@ table, th, td{
     margin:auto;
     border: 1px solid black;
 }
+div.welcome-bar {
+    padding-top: 40px;
+    padding-left: 20px;
+    font-size: 30px;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
