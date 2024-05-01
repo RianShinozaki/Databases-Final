@@ -51,6 +51,7 @@ a.login {
 h1.navigator-header {
     margin: 0px;
     padding-left: 20px;
+    padding-right: 20px;
     vertical-align: middle;
     color:var(--palette-1);
     font-family:monospace, 'Lucida Console';
@@ -135,7 +136,16 @@ table, th, td{
 }
 img.airline-logo {
     object-fit: contain;
-    width:30%;
+    width: auto;
     height: 70%;
-    float:inline-start
+    float: inline-start;
+}
+
+div.welcome-bar {
+    margin-top: 40px;
+    font-size: 30px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
