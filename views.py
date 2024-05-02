@@ -41,6 +41,10 @@ def homepage_fields():
 	if(session.get('returnTicketSellPrice')):
 		session.pop('returnTicketSellPrice')
 
+	if(not session.get('futureFlightPage')):
+		session['futureFlightPage'] = 1
+		session['pastFlightPage'] = 1
+		
 	if(session.get('email')):
 		cursor = conn.cursor()
 
@@ -129,10 +133,10 @@ def lookUpFlight():
 	departureAirport = request.form['departureAirport']
 	arrivalAirport = request.form['arrivalAirport']
 	departureDate = request.form['departureDate']
-	returnDate = request.form['returnDate']
+	returnDate = ''
 
-	print(returnDate)
-	print(departureDate)
+	if(session.get('email') and not session.get('admin')):
+		returnDate = request.form['returnDate']
 
 	cursor = conn.cursor()
 	query = 'SELECT DISTINCT name, num, depTime, arrTime, base_price, status FROM lookUpFlight WHERE departureAirport = %s AND arrivalAirport = %s AND depDate = %s'
